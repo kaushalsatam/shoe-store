@@ -31,10 +31,10 @@ CREATE TABLE products(
 CREATE TABLE products_images(
     id SERIAL PRIMARY KEY,
     main BYTEA NOT NULL,
-    left BYTEA NOT NULL,
-    right BYTEA NOT NULL,
-    top BYTEA NOT NULL,
-    bottom BYTEA NOT NULL,
+    left_view BYTEA NOT NULL,
+    right_view BYTEA NOT NULL,
+    top_view BYTEA NOT NULL,
+    bottom_view BYTEA NOT NULL,
     product_id INTEGER REFERENCES products(id)
 );
 
