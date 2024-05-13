@@ -19,6 +19,13 @@ db.connect();
 
 app.use(bodyParser.json());
 
+app.get("/", async (req, res) => {
+  const result = await db.query("SELECT * FROM administrator");
+  const finalResult = result.rows;
+  console.log(finalResult);
+  res.sendStatus(200).json(finalResult);
+});
+
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
 });

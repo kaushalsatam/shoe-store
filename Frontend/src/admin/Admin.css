@@ -1,0 +1,18 @@
+.admin-header-container h1{
+    display: inline-block;
+}
+
+.admin-header-container{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.admin-header{
+    display: flex;
+    list-style: none;
+    gap: 3rem;
+    height: 5rem;
+    justify-content: center;
+    align-items: center;
+}
