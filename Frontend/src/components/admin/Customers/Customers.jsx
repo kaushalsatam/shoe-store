@@ -1,7 +1,7 @@
 function Customers() {
   return (
     <div>
-      This is Customers page.
+      <h1>This is a Customers page.</h1>
     </div>
   )
 }

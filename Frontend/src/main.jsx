@@ -7,6 +7,9 @@ import ClientHome from './components/client/Home/Home.jsx'
 import AdminLayout from './components/admin/AdminLayout.jsx'
 import AdminHome from './components/admin/Home/Home.jsx'
 import Customers from './components/admin/Customers/Customers.jsx'
+import Products from './components/admin/Products/Products.jsx'
+import Orders from './components/admin/Orders/Orders.jsx'
+import Transactions from './components/admin/Transactions/Transactions.jsx'
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -17,6 +20,9 @@ const router = createBrowserRouter(
       <Route path='admin/' element={<AdminLayout />}>
         <Route path='' element={<AdminHome />} />
         <Route path='customers' element={<Customers />}/>
+        <Route path='products' element={<Products />}/>
+        <Route path='orders' element={<Orders />}/>
+        <Route path='transactions' element={<Transactions />}/>
       </Route>
     </Route>
   )
