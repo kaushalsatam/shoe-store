@@ -10,6 +10,7 @@ import Customers from './components/admin/Customers/Customers.jsx'
 import Products from './components/admin/Products/Products.jsx'
 import Orders from './components/admin/Orders/Orders.jsx'
 import Transactions from './components/admin/Transactions/Transactions.jsx'
+import Login from './components/admin/Login/Login.jsx'
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -17,6 +18,7 @@ const router = createBrowserRouter(
       <Route path='/' element={<ClientLayout />}>
         <Route path='' element={<ClientHome />}/>
       </Route>
+      <Route path='adminLogin' element={<Login />}/>
       <Route path='admin/' element={<AdminLayout />}>
         <Route path='' element={<AdminHome />} />
         <Route path='customers' element={<Customers />}/>
@@ -25,7 +27,7 @@ const router = createBrowserRouter(
         <Route path='transactions' element={<Transactions />}/>
       </Route>
     </Route>
-  )
+  ) 
 )
 
 ReactDOM.createRoot(document.getElementById('root')).render(
