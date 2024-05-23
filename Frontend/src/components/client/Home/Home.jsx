@@ -3,6 +3,7 @@ import runningShoes from "../../../assets/RunningShoes.jpg";
 import casualSneakers from "../../../assets/CasualSneakers.jpg";
 import formalShoes from "../../../assets/FormalShoes.jpg";
 import Front from "./Front";
+import { NavLink } from "react-router-dom";
 
 function Home() {
   return (
@@ -18,12 +19,12 @@ function Home() {
           </h2>
           <div className="mt-8 flex lg:mt-0 lg:flex-shrink-0">
             <div className="inline-flex rounded-md shadow">
-              <a
-                href="#"
+              <NavLink
+                to={"/products"}
                 className="inline-flex items-center justify-center px-5 py-3 border border-transparent text-base font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700"
               >
                 Shop Now
-              </a>
+              </NavLink>
             </div>
           </div>
         </div>
@@ -47,6 +48,7 @@ function Home() {
               imgSrc={runningShoes}
               category="Running Shoes"
               description=" High-performance running shoes for all your training needs."
+              route="/products?category=Running"
             />
 
             {/* Product 2 */}
@@ -54,12 +56,14 @@ function Home() {
               imgSrc={casualSneakers}
               category="Casual Sneakers"
               description=" Comfortable and stylish sneakers for everyday wear."
+              route="/products?category=Sneakers"
             />
 
             <FeaturedProduct
               imgSrc={formalShoes}
               category="Formal Shoes"
               description=" Elegant formal shoes for your professional attire."
+              route="/products?category=Formal"
             />
           </div>
         </div>

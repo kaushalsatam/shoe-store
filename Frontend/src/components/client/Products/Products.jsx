@@ -1,24 +1,28 @@
-import Card from "./Card";
+import { useEffect, useState } from "react";
+import ProductCard from "./ProductCard";
 import Sidebar from "./Sidebar";
+import { baseURL } from "../../../utils/baseURL";
+import axios from "axios";
 
 function Products() {
-  const sneaker = {
-    name: "Cool Sneaker",
-    description: "This is a cool sneaker that is very comfortable and stylish.",
-    price: 120,
-    // imageUrl: { cardPlaceholder },
-  };
+  const [products, setProducts] = useState([]);
+
+  async function getData() {
+    const result = await axios.get(`${baseURL}/getProducts`);
+    setProducts(result.data);
+  }
+
+  useEffect(() => {
+    getData();
+  }, []);
 
   return (
     <div className="products-container flex">
       <Sidebar />
       <div className="flex flex-wrap gap-4 justify-around p-12">
-        <Card sneaker={sneaker} />
-        <Card sneaker={sneaker} />
-        <Card sneaker={sneaker} />
-        <Card sneaker={sneaker} />
-        <Card sneaker={sneaker} />
-        <Card sneaker={sneaker} />
+        {products.map((data) => (
+          <ProductCard key={data.id} cardData={data} />
+        ))}
       </div>
     </div>
   );

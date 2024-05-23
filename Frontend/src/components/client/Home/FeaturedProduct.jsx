@@ -1,3 +1,5 @@
+import { NavLink } from "react-router-dom";
+
 function FeaturedProduct(props) {
   return (
     <div className="flex flex-col rounded-lg shadow-lg overflow-hidden">
@@ -18,12 +20,12 @@ function FeaturedProduct(props) {
           <p className="mt-3 text-base text-gray-500">{props.description}</p>
         </div>
         <div className="mt-6">
-          <a
-            href="#"
+          <NavLink
+            to={props.route}
             className="text-indigo-600 hover:text-indigo-500 font-medium"
           >
             Buy Now &rarr;
-          </a>
+          </NavLink>
         </div>
       </div>
     </div>

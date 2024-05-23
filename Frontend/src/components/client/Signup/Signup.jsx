@@ -2,10 +2,14 @@ import { Button, TextField } from "@mui/material";
 import axios from "axios";
 import { useForm } from "react-hook-form";
 import { baseURL } from "../../../utils/baseURL";
+import { useNavigate } from "react-router-dom";
 
 function Signup() {
+  const navigate = useNavigate();
+
   async function handleSignup(data) {
-    const result = await axios.post(`${baseURL}/signup`, data);
+    await axios.post(`${baseURL}/signup`, data);
+    navigate("/products");
   }
 
   const {

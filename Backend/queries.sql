@@ -16,27 +16,30 @@ CREATE TABLE customers(
     password VARCHAR(100) NOT NULL
 );
 
-CREATE TABLE products(
+
+CREATE TABLE products (
     id SERIAL PRIMARY KEY,
     name VARCHAR(100) NOT NULL,
     brand VARCHAR(25) NOT NULL,
     description TEXT NOT NULL,
-    original_price MONEY NOT NULL,
-    current_price MONEY NOT NULL,
+    original_price INTEGER NOT NULL,
+    current_price INTEGER NOT NULL,
     category VARCHAR(50) NOT NULL,
     gender VARCHAR(10) NOT NULL,
     stock_quantity BIGINT NOT NULL
 );
 
-CREATE TABLE products_images(
+
+CREATE TABLE products_images (
     id SERIAL PRIMARY KEY,
     main BYTEA NOT NULL,
     left_view BYTEA NOT NULL,
     right_view BYTEA NOT NULL,
     top_view BYTEA NOT NULL,
     bottom_view BYTEA NOT NULL,
-    product_id INTEGER REFERENCES products(id)
+    product_id INTEGER REFERENCES products(id) ON UPDATE CASCADE ON DELETE CASCADE
 );
+
 
 CREATE TABLE cart(
     id SERIAL PRIMARY KEY,
@@ -49,7 +52,7 @@ CREATE TABLE orders(
     id SERIAL PRIMARY KEY,
     customer_id INTEGER REFERENCES customers(id),
     date DATE,
-    total_amount MONEY,
+    total_amount INTEGER,
     shipping_method VARCHAR(50),
     order_status VARCHAR(50)
 );
@@ -59,14 +62,14 @@ CREATE TABLE order_items(
     order_id INTEGER REFERENCES orders(id),
     product_id INTEGER REFERENCES products(id),
     quantity INTEGER,
-    price MONEY
+    price INTEGER
 );
 
 CREATE TABLE transactions(
     id SERIAL PRIMARY KEY,
     order_id INTEGER REFERENCES orders(id),
     payment_method VARCHAR(50),
-    amount MONEY,
+    amount INTEGER,
     date DATE
 );
 
@@ -78,3 +81,5 @@ CREATE TABLE reviews(
     comment TEXT NOT NULL,
     date DATE
 );
+
+INSERT INTO administrator (name, email, password) VALUES ('Admin', 'admin@gmail.com', 'admin@123')
