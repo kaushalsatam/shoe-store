@@ -20,6 +20,7 @@ import Signup from "./components/client/Signup/Signup.jsx";
 import ClientProducts from "./components/client/Products/Products.jsx";
 import Checkout from "./components/client/Checkout/Checkout.jsx";
 import AddProduct from "./components/admin/Products/AddProduct.jsx";
+import ClientProductDetails from "./components/client/Products/ProductDetails.jsx";
 
 function App() {
   const [isAdminAuthenticated, setIsAdminAuthenticated] = useState(false);
@@ -31,6 +32,10 @@ function App() {
           <Route index element={<ClientHome />} />
           <Route path="signup" element={<Signup />} />
           <Route path="products" element={<ClientProducts />} />
+          <Route
+            path="product-details/:id"
+            element={<ClientProductDetails />}
+          />
           <Route path="checkout" element={<Checkout />} />
         </Route>
         <Route

@@ -228,6 +228,19 @@ app.delete("/deleteProduct/:id", async (req, res) => {
   }
 });
 
+app.get("/products/:id", async (req, res) => {
+  const { id } = req.params;
+  try {
+    const request = await db.query(
+      "SELECT p.id, p.name, p.brand, p.description, p.original_price, p.current_price, p.category, p.gender, p.stock_quantity, pi.main, pi.left_view, pi.right_view, pi.top_view, pi.bottom_view FROM products p JOIN products_images pi ON p.id = pi.product_id WHERE p.id = $1",
+      [id]
+    );
+    res.status(200).json(request.rows);
+  } catch (e) {
+    console.log(e.message);
+  }
+});
+
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
 });
