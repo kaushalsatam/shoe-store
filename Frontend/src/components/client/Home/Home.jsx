@@ -56,7 +56,7 @@ function Home() {
               imgSrc={casualSneakers}
               category="Casual Sneakers"
               description=" Comfortable and stylish sneakers for everyday wear."
-              route="/products?category=Sneakers"
+              route="/products?category=Sneaker"
             />
 
             <FeaturedProduct

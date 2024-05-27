@@ -21,6 +21,9 @@ import ClientProducts from "./components/client/Products/Products.jsx";
 import Checkout from "./components/client/Checkout/Checkout.jsx";
 import AddProduct from "./components/admin/Products/AddProduct.jsx";
 import ClientProductDetails from "./components/client/Products/ProductDetails.jsx";
+import UserLogin from "./components/client/Login/Login.jsx";
+import { clientContext } from "./components/client/Context/clientContext.js";
+import Bag from "./components/client/Bag/Bag.jsx";
 
 function App() {
   const [isAdminAuthenticated, setIsAdminAuthenticated] = useState(false);
@@ -37,7 +40,27 @@ function App() {
             path="product-details/:id"
             element={<ClientProductDetails />}
           />
-          <Route path="user/checkout" element={<Checkout />} />
+          <Route
+            path="user-login"
+            element={<UserLogin setIsAuthenticated={setIsAuthenticated} />}
+          />
+          <Route
+            path="user/*"
+            element={
+              isAuthenticated ? (
+                <clientContext.Provider
+                  value={{ isAuthenticated, setIsAuthenticated }}
+                >
+                  <ClientLayout isAuthenticated={isAuthenticated} />
+                </clientContext.Provider>
+              ) : (
+                <Navigate replace to="/user-login" />
+              )
+            }
+          >
+            <Route path="checkout" element={<Checkout />} />
+            <Route path="bag" element={<Bag />} />
+          </Route>
         </Route>
         <Route
           path="adminLogin"

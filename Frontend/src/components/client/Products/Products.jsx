@@ -10,10 +10,10 @@ function Products() {
   // const [gender, setGender] = useState(null);
   const location = useLocation();
 
-  async function getData(gender) {
+  async function getData(gender, category) {
     try {
       const result = await axios.get(`${baseURL}/getProducts`, {
-        params: { gender },
+        params: { gender, category },
       });
       setProducts(result.data);
     } catch (error) {
@@ -24,8 +24,9 @@ function Products() {
   useEffect(() => {
     const searchParams = new URLSearchParams(location.search);
     const genderParam = searchParams.get("gender");
+    const categoryParam = searchParams.get("category");
     // setGender(genderParam);
-    getData(genderParam);
+    getData(genderParam, categoryParam);
   }, [location.search]);
 
   return (

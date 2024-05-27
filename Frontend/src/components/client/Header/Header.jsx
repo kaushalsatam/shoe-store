@@ -35,9 +35,11 @@ function Header() {
           </li>
 
           <li className="text-xl font-medium">
-            <IconButton aria-label="bag">
-              <ShoppingBagIcon />
-            </IconButton>
+            <NavLink to={"/user/bag"}>
+              <IconButton aria-label="bag">
+                <ShoppingBagIcon />
+              </IconButton>
+            </NavLink>
           </li>
           <li className="text-xl font-medium">
             {/* <IconButton aria-label="person">

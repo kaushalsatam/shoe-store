@@ -4,15 +4,12 @@ import { useForm } from "react-hook-form";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
-function Login({ isAuthenticated }) {
+function Login({ setIsAuthenticated }) {
   const navigate = useNavigate();
 
   const handleLogin = async (data) => {
     try {
-      const result = await axios.post(
-        "http://localhost:3000/customerLogin",
-        data
-      );
+      const result = await axios.post("http://localhost:3000/login", data);
       // console.log(result.data)
       if (result.status == 200) {
         setIsAuthenticated(true);
@@ -37,7 +34,7 @@ function Login({ isAuthenticated }) {
 
   return (
     <>
-      <div className="login-form-container h-screen w-full flex justify-center items-center flex-col">
+      <div className="login-form-container h-dvh w-full flex justify-center items-center flex-col">
         <div
           id="login-form"
           className="flex flex-col w-96 p-6 m-6 justify-center items-center gap-4 rounded-2xl shadow-md bg-cyan-100"

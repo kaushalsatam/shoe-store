@@ -1,15 +1,21 @@
-import { Outlet } from 'react-router-dom'
-import Header from './Header/Header'
-import Footer from './Footer/Footer'
+import { Outlet } from "react-router-dom";
+import Header from "./Header/Header";
+import Footer from "./Footer/Footer";
 
-function ClientLayout() {
+function ClientLayout({ isAuthenticated }) {
   return (
     <>
-      <Header />
-      <Outlet />
-      <Footer />
+      {isAuthenticated ? (
+        <Outlet />
+      ) : (
+        <>
+          <Header />
+          <Outlet />
+          <Footer />
+        </>
+      )}
     </>
-  )
+  );
 }
 
-export default ClientLayout
+export default ClientLayout;
