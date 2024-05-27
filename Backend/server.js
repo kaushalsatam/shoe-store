@@ -182,10 +182,19 @@ app.post(
 
 // GET route for all details of products
 app.get("/getProducts", async (req, res) => {
-  const request = await db.query(
-    "SELECT p.id, p.name, p.brand, p.description, p.original_price, p.current_price, p.category, p.gender, p.stock_quantity, pi.main, pi.left_view, pi.right_view, pi.top_view, pi.bottom_view FROM products p JOIN products_images pi ON p.id = pi.product_id"
-  );
-  res.status(200).json(request.rows);
+  const gender = req.query.gender;
+  if (gender) {
+    const request = await db.query(
+      "SELECT p.id, p.name, p.brand, p.description, p.original_price, p.current_price, p.category, p.gender, p.stock_quantity, pi.main, pi.left_view, pi.right_view, pi.top_view, pi.bottom_view FROM products p JOIN products_images pi ON p.id = pi.product_id WHERE p.gender = $1",
+      [gender]
+    );
+    res.status(200).json(request.rows);
+  } else {
+    const request = await db.query(
+      "SELECT p.id, p.name, p.brand, p.description, p.original_price, p.current_price, p.category, p.gender, p.stock_quantity, pi.main, pi.left_view, pi.right_view, pi.top_view, pi.bottom_view FROM products p JOIN products_images pi ON p.id = pi.product_id"
+    );
+    res.status(200).json(request.rows);
+  }
 });
 
 // DELETE route for deleting Products

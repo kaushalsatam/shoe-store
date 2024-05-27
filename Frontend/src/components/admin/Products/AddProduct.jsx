@@ -184,6 +184,7 @@ function AddProduct() {
                   >
                     <MenuItem value="Male">Male</MenuItem>
                     <MenuItem value="Female">Female</MenuItem>
+                    <MenuItem value="Kids">Kids</MenuItem>
                     <MenuItem value="Unisex">Unisex</MenuItem>
                   </Select>
                 )}

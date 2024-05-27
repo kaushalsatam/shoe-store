@@ -24,6 +24,7 @@ import ClientProductDetails from "./components/client/Products/ProductDetails.js
 
 function App() {
   const [isAdminAuthenticated, setIsAdminAuthenticated] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   const router = createBrowserRouter(
     createRoutesFromElements(
@@ -36,7 +37,7 @@ function App() {
             path="product-details/:id"
             element={<ClientProductDetails />}
           />
-          <Route path="checkout" element={<Checkout />} />
+          <Route path="user/checkout" element={<Checkout />} />
         </Route>
         <Route
           path="adminLogin"
