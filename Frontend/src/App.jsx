@@ -28,6 +28,7 @@ import Bag from "./components/client/Bag/Bag.jsx";
 function App() {
   const [isAdminAuthenticated, setIsAdminAuthenticated] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [customerData, setCustomerData] = useState([]);
 
   const router = createBrowserRouter(
     createRoutesFromElements(
@@ -38,11 +39,21 @@ function App() {
           <Route path="products" element={<ClientProducts />} />
           <Route
             path="product-details/:id"
-            element={<ClientProductDetails />}
+            element={
+              <ClientProductDetails
+                isAuthenticated={isAuthenticated}
+                customerData={customerData}
+              />
+            }
           />
           <Route
             path="user-login"
-            element={<UserLogin setIsAuthenticated={setIsAuthenticated} />}
+            element={
+              <UserLogin
+                setIsAuthenticated={setIsAuthenticated}
+                setCustomerData={setCustomerData}
+              />
+            }
           />
           <Route
             path="user/*"
@@ -59,7 +70,7 @@ function App() {
             }
           >
             <Route path="checkout" element={<Checkout />} />
-            <Route path="bag" element={<Bag />} />
+            <Route path="bag" element={<Bag customerData={customerData} />} />
           </Route>
         </Route>
         <Route

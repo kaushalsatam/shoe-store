@@ -107,8 +107,12 @@ app.post("/login", async (req, res) => {
       "SELECT * FROM customers WHERE email = $1 and password = $2",
       [email, password]
     );
+    // console.log(result.rows);
     if (result.rows.length > 0) {
-      res.status(200).json({ message: "You have successfully logged in!" });
+      res.status(200).json({
+        message: "You have successfully logged in!",
+        userData: result.rows[0],
+      });
     } else {
       res.status(400).json({ message: "Login unsuccessfull!" });
     }
@@ -272,6 +276,72 @@ app.get("/products/:id", async (req, res) => {
   } catch (e) {
     console.log(e.message);
   }
+});
+
+// POST route to add product to cart/bag
+app.post("/addtobag", async (req, res) => {
+  const { customerId, productId, quantity } = req.body;
+  try {
+    const check = await db.query(
+      "SELECT * FROM cart WHERE customer_id = $1 AND product_id = $2",
+      [customerId, productId]
+    );
+    if (check.rows.length > 0) {
+      const result = await db.query(
+        "UPDATE cart SET quantity = quantity + $1 WHERE customer_id = $2 and product_id = $3",
+        [quantity, customerId, productId]
+      );
+      res.status(200).json({ message: "Product added to cart!" });
+    } else {
+      const result = await db.query(
+        "INSERT INTO cart (customer_id, product_id, quantity) VALUES ($1, $2, $3)",
+        [customerId, productId, quantity]
+      );
+      // console.log(quantity);
+    }
+  } catch (e) {
+    console.log(e.message);
+  }
+});
+
+app.get("/bag", async (req, res) => {
+  const { id } = req.query;
+  try {
+    const result = await db.query(
+      "SELECT c.id as customer_id, c.name as customer_name, c.email, c.phone, c.address, ca.product_id, ca.quantity, p.name as product_name, p.brand, p.current_price, pi.left_view FROM customers c JOIN cart ca ON c.id = ca.customer_id JOIN products p ON p.id = ca.product_id JOIN products_images pi ON p.id = pi.product_id WHERE customer_id = $1",
+      [id]
+    );
+    res.status(200).json(result.rows);
+  } catch (e) {
+    console.log(e);
+  }
+});
+
+app.put("/cart/update-quantity", async (req, res) => {
+  const { customer_id, product_id, quantity } = req.body;
+
+  try {
+    await db.query(
+      "UPDATE cart SET quantity = $1 WHERE customer_id = $2 AND product_id = $3",
+      [quantity, customer_id, product_id]
+    );
+    res.status(200).json({ message: "Quantity updated successfully" });
+  } catch (error) {
+    console.error("Error updating quantity:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+app.get("/cart", async (req, res) => {
+  const { customer_id, product_id } = req.query;
+  const result = await db.query(
+    "SELECT * FROM cart WHERE customer_id = $1 AND product_id = $2",
+    [customer_id, product_id]
+  );
+  if (result.rows.length === 0) {
+    return res.status(404).json({ error: "Product not found in cart" });
+  }
+  res.json(result.rows[0]);
 });
 
 app.listen(PORT, () => {

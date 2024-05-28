@@ -4,11 +4,31 @@ import { baseURL } from "../../../utils/baseURL";
 import axios from "axios";
 import Carousel from "./Carousel";
 
-function ProductDetails() {
+function ProductDetails({ isAuthenticated, customerData }) {
   const [productData, setProductData] = useState(null);
+  const [quantity, setQuantity] = useState(1);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const { id } = useParams();
+
+  async function addToBag(id) {
+    try {
+      if (isAuthenticated) {
+        const customerId = parseInt(JSON.stringify(customerData.id));
+        const productId = parseInt(id);
+        const request = await axios.post(`${baseURL}/addtobag`, {
+          customerId,
+          productId,
+          quantity,
+        });
+        console.log(request.data);
+      } else {
+        console.log("Please log in");
+      }
+    } catch (e) {
+      console.log(e.message);
+    }
+  }
 
   useEffect(() => {
     async function getProductData(id) {
@@ -50,7 +70,12 @@ function ProductDetails() {
           </span>
         </div>
         <p className="text-lg">{productData.description}</p>
-        <button className="border p-4 mx-4 bg-black text-white rounded-full font-semibold">
+        <button
+          className="border p-4 mx-4 bg-black text-white rounded-full font-semibold"
+          onClick={() => {
+            addToBag(id);
+          }}
+        >
           Add to Bag
         </button>
         <button className="border p-4 mx-4 border-black bg-white rounded-full font-semibold">
