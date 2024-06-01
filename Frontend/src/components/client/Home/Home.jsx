@@ -4,6 +4,7 @@ import casualSneakers from "../../../assets/CasualSneakers.jpg";
 import formalShoes from "../../../assets/FormalShoes.jpg";
 import Front from "./Front";
 import { NavLink } from "react-router-dom";
+import Footer from "../Footer/Footer";
 
 function Home() {
   return (
@@ -68,6 +69,7 @@ function Home() {
           </div>
         </div>
       </section>
+      <Footer />
     </>
   );
 }

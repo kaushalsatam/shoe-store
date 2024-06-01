@@ -103,21 +103,32 @@ app.post("/signup", async (req, res) => {
 app.post("/login", async (req, res) => {
   const { email, password } = req.body;
   try {
-    const result = await db.query(
-      "SELECT * FROM customers WHERE email = $1 and password = $2",
-      [email, password]
+    const userCheck = await db.query(
+      "SELECT * FROM customers WHERE email = $1",
+      [email]
     );
     // console.log(result.rows);
-    if (result.rows.length > 0) {
-      res.status(200).json({
-        message: "You have successfully logged in!",
-        userData: result.rows[0],
-      });
+    if (userCheck.rows.length > 0) {
+      const result = await db.query(
+        "SELECT * FROM customers WHERE email = $1 AND password = $2",
+        [email, password]
+      );
+      if (result.rows.length > 0) {
+        res.status(200).json({
+          message: "You have successfully logged in!",
+          userData: result.rows[0],
+        });
+      } else {
+        res
+          .status(400)
+          .json({ message: "Login unsuccessful! Incorrect password." });
+      }
     } else {
-      res.status(400).json({ message: "Login unsuccessfull!" });
+      res.status(400).json({ message: "Login unsuccessful! User not found." });
     }
   } catch (e) {
-    console.log(e.message);
+    console.error(e.message);
+    res.status(500).json({ message: "Internal server error." });
   }
 });
 

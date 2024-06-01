@@ -7,7 +7,6 @@ import { useLocation } from "react-router-dom";
 
 function Products() {
   const [products, setProducts] = useState([]);
-  // const [gender, setGender] = useState(null);
   const location = useLocation();
 
   async function getData(gender, category) {
@@ -25,14 +24,13 @@ function Products() {
     const searchParams = new URLSearchParams(location.search);
     const genderParam = searchParams.get("gender");
     const categoryParam = searchParams.get("category");
-    // setGender(genderParam);
     getData(genderParam, categoryParam);
   }, [location.search]);
 
   return (
     <div className="products-container flex">
       <Sidebar />
-      <div className="flex flex-wrap gap-4 justify-around p-12">
+      <div className="ml-64 flex flex-wrap gap-4 justify-around p-12">
         {products.map((data) => (
           <ProductCard key={data.id} cardData={data} />
         ))}

@@ -1,11 +1,21 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { baseURL } from "../../../utils/baseURL"; // Adjust the import according to your project structure
+import { debounce } from "lodash";
+import AddIcon from "@mui/icons-material/Add";
+import RemoveIcon from "@mui/icons-material/Remove";
+import { IconButton } from "@mui/material";
 
-function QuantitySelector({ customer_id, product_id, product_quantity }) {
+function QuantitySelector({
+  customer_id,
+  product_id,
+  product_quantity,
+  product_current_price,
+  setTotal,
+}) {
   const [quantity, setQuantity] = useState(product_quantity);
 
-  const updateQuantityInBackend = async (newQuantity) => {
+  const updateQuantityInBackend = debounce(async (newQuantity) => {
     try {
       await axios.put(`${baseURL}/cart/update-quantity`, {
         customer_id,
@@ -15,12 +25,13 @@ function QuantitySelector({ customer_id, product_id, product_quantity }) {
     } catch (error) {
       console.error("Error updating quantity:", error);
     }
-  };
+  }, 500);
 
   const increaseQuantity = () => {
     const newQuantity = quantity + 1;
     setQuantity(newQuantity);
     updateQuantityInBackend(newQuantity);
+    setTotal(newQuantity * product_current_price);
   };
 
   const decreaseQuantity = () => {
@@ -28,6 +39,7 @@ function QuantitySelector({ customer_id, product_id, product_quantity }) {
       const newQuantity = quantity - 1;
       setQuantity(newQuantity);
       updateQuantityInBackend(newQuantity);
+      setTotal(newQuantity * product_current_price);
     }
   };
 
@@ -49,21 +61,15 @@ function QuantitySelector({ customer_id, product_id, product_quantity }) {
 
   return (
     <div className="flex items-center space-x-4">
-      <button
-        onClick={decreaseQuantity}
-        className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-700"
-      >
-        -
-      </button>
+      <IconButton onClick={decreaseQuantity}>
+        <RemoveIcon />
+      </IconButton>
       <div className="w-12 h-12 flex items-center justify-center bg-gray-200 rounded text-lg">
         {quantity}
       </div>
-      <button
-        onClick={increaseQuantity}
-        className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-700"
-      >
-        +
-      </button>
+      <IconButton onClick={increaseQuantity}>
+        <AddIcon />
+      </IconButton>
     </div>
   );
 }

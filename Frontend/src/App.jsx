@@ -25,10 +25,17 @@ import UserLogin from "./components/client/Login/Login.jsx";
 import { clientContext } from "./components/client/Context/clientContext.js";
 import Bag from "./components/client/Bag/Bag.jsx";
 
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
 function App() {
   const [isAdminAuthenticated, setIsAdminAuthenticated] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [customerData, setCustomerData] = useState([]);
+
+  const notify = () => {
+    toast("Please Log in!");
+  };
 
   const router = createBrowserRouter(
     createRoutesFromElements(
@@ -43,6 +50,7 @@ function App() {
               <ClientProductDetails
                 isAuthenticated={isAuthenticated}
                 customerData={customerData}
+                notify={notify}
               />
             }
           />
@@ -62,7 +70,10 @@ function App() {
                 <clientContext.Provider
                   value={{ isAuthenticated, setIsAuthenticated }}
                 >
-                  <ClientLayout isAuthenticated={isAuthenticated} />
+                  <ClientLayout
+                    isAuthenticated={isAuthenticated}
+                    notify={notify}
+                  />
                 </clientContext.Provider>
               ) : (
                 <Navigate replace to="/user-login" />
@@ -102,7 +113,12 @@ function App() {
     )
   );
 
-  return <RouterProvider router={router} />;
+  return (
+    <>
+      <RouterProvider router={router} />
+      <ToastContainer position="top-center" theme="dark" />
+    </>
+  );
 }
 
 export default App;

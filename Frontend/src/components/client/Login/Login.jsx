@@ -2,7 +2,9 @@ import { Button, TextField } from "@mui/material";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import { useForm } from "react-hook-form";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 function Login({ setIsAuthenticated, setCustomerData }) {
   const navigate = useNavigate();
@@ -15,9 +17,13 @@ function Login({ setIsAuthenticated, setCustomerData }) {
         setIsAuthenticated(true);
         setCustomerData(result.data.userData);
         navigate("/");
+        toast.success(result.data.message);
+      } else {
+        toast.error(result.data.message);
       }
     } catch (e) {
       console.log(e.message);
+      // toast.error("Login unsuccessful!");
     }
   };
 
@@ -35,7 +41,8 @@ function Login({ setIsAuthenticated, setCustomerData }) {
 
   return (
     <>
-      <div className="login-form-container h-dvh w-full flex justify-center items-center flex-col">
+      <div className="login-form-container my-16 w-full flex justify-center items-center flex-col">
+        <h1 className="text-2xl font-semibold">Welcome Back!</h1>
         <div
           id="login-form"
           className="flex flex-col w-96 p-6 m-6 justify-center items-center gap-4 rounded-2xl shadow-md bg-cyan-100"
@@ -69,6 +76,12 @@ function Login({ setIsAuthenticated, setCustomerData }) {
             </div>
           </form>
         </div>
+        <p>
+          Don't have an account ?{" "}
+          <NavLink to={"/signup"} className="text-blue-500">
+            Sign up
+          </NavLink>
+        </p>
       </div>
     </>
   );

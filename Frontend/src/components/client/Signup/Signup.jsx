@@ -2,7 +2,7 @@ import { Button, TextField } from "@mui/material";
 import axios from "axios";
 import { useForm } from "react-hook-form";
 import { baseURL } from "../../../utils/baseURL";
-import { useNavigate } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 
 function Signup() {
   const navigate = useNavigate();
@@ -74,7 +74,12 @@ function Signup() {
           <Button variant="contained" type="submit">
             CONTINUE
           </Button>
-          <p>Already have an account? Login</p>
+          <p>
+            Already have an account?{" "}
+            <NavLink to={"/user-login"} className="text-blue-500">
+              Login
+            </NavLink>
+          </p>
         </div>
       </form>
     </div>

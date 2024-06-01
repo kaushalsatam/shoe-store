@@ -22,8 +22,9 @@ const Sidebar = () => {
   const handleCategoryChange = (event) => {
     setCategory(event.target.value);
   };
+
   return (
-    <div className="w-auto px-5 py-10 sm:px-0 sm:w-44 space-x-2 sm:space-x-0  sm:mx-24 text-center flex flex-col gap-8">
+    <div className="fixed top-0 h-full w-64 px-5 py-10 mt-24 sm:px-0 sm:w-44 space-x-2 sm:space-x-0 text-center flex flex-col gap-8 bg-white">
       <div>
         <h2 className="text-xl font-bold mb-4">Search</h2>
         <TextField
@@ -59,39 +60,28 @@ const Sidebar = () => {
       </div>
       <hr />
       <div>
+        <h2 className="text-xl font-bold mb-4">Categories</h2>
         <FormControl>
           <RadioGroup
             aria-labelledby="demo-radio-buttons-group-label"
-            defaultValue="Women"
             name="radio-buttons-group"
           >
-            <FormControlLabel value="Men" control={<Radio />} label="Men" />
-            <FormControlLabel value="Women" control={<Radio />} label="Women" />
-            <FormControlLabel value="Kids" control={<Radio />} label="Kids" />
             <FormControlLabel
-              value="Unisex"
+              value="Running"
               control={<Radio />}
-              label="Unisex"
+              label="Running"
+            />
+            <FormControlLabel
+              value="Sneaker"
+              control={<Radio />}
+              label="Sneaker"
+            />
+            <FormControlLabel
+              value="Casual"
+              control={<Radio />}
+              label="Casual"
             />
           </RadioGroup>
-        </FormControl>
-      </div>
-      <hr />
-      <div>
-        <FormControl fullWidth>
-          <InputLabel id="demo-simple-select-label">Categories</InputLabel>
-          <Select
-            labelId="demo-simple-select-label"
-            id="demo-simple-select"
-            value={category}
-            label="Sort by"
-            onChange={handleCategoryChange}
-          >
-            <MenuItem value="">Default</MenuItem>
-            <MenuItem value="Running">Running</MenuItem>
-            <MenuItem value="Sneaker">Sneaker</MenuItem>
-            <MenuItem value="Casual">Casual</MenuItem>
-          </Select>
         </FormControl>
       </div>
       <hr />

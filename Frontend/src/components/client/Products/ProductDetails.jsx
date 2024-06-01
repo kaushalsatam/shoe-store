@@ -3,8 +3,10 @@ import { useParams } from "react-router-dom";
 import { baseURL } from "../../../utils/baseURL";
 import axios from "axios";
 import Carousel from "./Carousel";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
-function ProductDetails({ isAuthenticated, customerData }) {
+function ProductDetails({ isAuthenticated, customerData, notify }) {
   const [productData, setProductData] = useState(null);
   const [quantity, setQuantity] = useState(1);
   const [loading, setLoading] = useState(true);
@@ -14,6 +16,7 @@ function ProductDetails({ isAuthenticated, customerData }) {
   async function addToBag(id) {
     try {
       if (isAuthenticated) {
+        toast.success("Added to bag successfully!");
         const customerId = parseInt(JSON.stringify(customerData.id));
         const productId = parseInt(id);
         const request = await axios.post(`${baseURL}/addtobag`, {
@@ -23,9 +26,10 @@ function ProductDetails({ isAuthenticated, customerData }) {
         });
         console.log(request.data);
       } else {
-        console.log("Please log in");
+        toast.error("Please log in to add items to your bag.");
       }
     } catch (e) {
+      toast.error("Error adding to bag: " + e.message);
       console.log(e.message);
     }
   }
@@ -58,7 +62,6 @@ function ProductDetails({ isAuthenticated, customerData }) {
     <div className="grid grid-cols-2">
       {productData ? <Carousel productData={productData} /> : "No product data"}
       <div className="data p-8 flex flex-col gap-4">
-        {" "}
         <h1 className="font-black text-4xl">{productData.name}</h1>
         <h2 className="text-xl">
           by <span className="font-bold">{productData.brand}</span>
@@ -71,14 +74,14 @@ function ProductDetails({ isAuthenticated, customerData }) {
         </div>
         <p className="text-lg">{productData.description}</p>
         <button
-          className="border p-4 mx-4 bg-black text-white rounded-full font-semibold"
+          className="border p-4 mx-4 bg-black hover:bg-gray-900 text-white rounded-full font-semibold"
           onClick={() => {
             addToBag(id);
           }}
         >
           Add to Bag
         </button>
-        <button className="border p-4 mx-4 border-black bg-white rounded-full font-semibold">
+        <button className="border p-4 mx-4 border-black bg-white hover:bg-gray-200 rounded-full font-semibold">
           Add to Favourites
         </button>
       </div>

@@ -11,7 +11,6 @@ function ClientLayout({ isAuthenticated }) {
         <>
           <Header />
           <Outlet />
-          <Footer />
         </>
       )}
     </>
