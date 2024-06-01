@@ -1,15 +1,13 @@
 import React, { useEffect, useState } from "react";
 import QuantitySelector from "./QuantitySelector";
 
-function Item({ bagData }) {
+function Item({ bagData, getSubTotal }) {
   const [imageSrc, setImageSrc] = useState("");
   const [total, setTotal] = useState(bagData.quantity * bagData.current_price);
 
   useEffect(() => {
     if (bagData && bagData.left_view && bagData.left_view.data) {
-      // Create a Uint8Array from the binary data
       const binaryData = new Uint8Array(bagData.left_view.data);
-      // Convert the binary data to a base64 string
       const base64String = btoa(
         binaryData.reduce((data, byte) => data + String.fromCharCode(byte), "")
       );
@@ -42,6 +40,7 @@ function Item({ bagData }) {
             product_quantity={bagData.quantity}
             product_current_price={bagData.current_price}
             setTotal={setTotal}
+            getSubTotal={getSubTotal}
           />
         </div>
         <div>

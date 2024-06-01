@@ -4,6 +4,8 @@ import pg from "pg";
 import env from "dotenv";
 import cors from "cors";
 import multer from "multer";
+import Razorpay from "razorpay";
+import crypto from "crypto";
 
 const app = express();
 const PORT = 3000;
@@ -319,12 +321,34 @@ app.get("/bag", async (req, res) => {
   const { id } = req.query;
   try {
     const result = await db.query(
-      "SELECT c.id as customer_id, c.name as customer_name, c.email, c.phone, c.address, ca.product_id, ca.quantity, p.name as product_name, p.brand, p.current_price, pi.left_view FROM customers c JOIN cart ca ON c.id = ca.customer_id JOIN products p ON p.id = ca.product_id JOIN products_images pi ON p.id = pi.product_id WHERE customer_id = $1",
+      "SELECT c.id as customer_id, c.name as customer_name, c.email, c.phone, c.address, ca.product_id, ca.quantity, p.name as product_name, p.brand, p.current_price, (ca.quantity * p.current_price) as total_price, pi.left_view FROM customers c JOIN cart ca ON c.id = ca.customer_id JOIN products p ON p.id = ca.product_id JOIN products_images pi ON p.id = pi.product_id WHERE customer_id = $1",
       [id]
     );
     res.status(200).json(result.rows);
   } catch (e) {
     console.log(e);
+  }
+});
+
+app.get("/get-subtotal", async (req, res) => {
+  const { id } = req.query;
+  try {
+    const result = await db.query(
+      `WITH bag_data AS (
+        SELECT (ca.quantity * p.current_price) as total_price
+        FROM customers c 
+        JOIN cart ca ON c.id = ca.customer_id 
+        JOIN products p ON p.id = ca.product_id 
+        WHERE c.id = $1
+      )
+      SELECT SUM(total_price) as subtotal 
+      FROM bag_data`,
+      [id]
+    );
+    res.status(200).json(result.rows[0]);
+    // console.log(result.rows[0]);
+  } catch (e) {
+    console.log(e.message);
   }
 });
 
@@ -353,6 +377,54 @@ app.get("/cart", async (req, res) => {
     return res.status(404).json({ error: "Product not found in cart" });
   }
   res.json(result.rows[0]);
+});
+
+app.post("/order", async (req, res) => {
+  try {
+    const razorpay = new Razorpay({
+      key_id: process.env.RAZORPAY_KEY_ID,
+      key_secret: process.env.RAZORPAY_KEY_SECRET,
+    });
+
+    const options = {
+      amount: req.body.amount, // amount in smallest currency unit
+      currency: "INR",
+      receipt: req.body.receipt,
+      payment_capture: "1", // auto capture
+    };
+
+    const order = await razorpay.orders.create(options);
+
+    if (!order) {
+      return res.status(500).send("Error creating order");
+    }
+
+    res.status(200).json(order);
+  } catch (error) {
+    console.error("Error creating order:", error.message);
+    res.status(500).send("Internal Server Error");
+  }
+});
+
+app.post("/order/validate", async (req, res) => {
+  // console.log(req.body.body.id);
+  const { razorpay_payment_id, razorpay_order_id, razorpay_signature, id } =
+    req.body.body;
+
+  const sha = crypto.createHmac("sha256", process.env.RAZORPAY_KEY_SECRET);
+  sha.update(`${razorpay_order_id}|${razorpay_payment_id}`);
+  const digest = sha.digest("hex");
+  if (digest !== razorpay_signature) {
+    res.status(400).json({ message: "Transaction failed!" });
+  } else {
+    res.json({
+      message: "Transaction successful!",
+      orderId: razorpay_order_id,
+      paymentId: razorpay_payment_id,
+    });
+    await db.query("DELETE FROM cart WHERE customer_id = $1", [id]);
+  }
+  // console.log(req.body);
 });
 
 app.listen(PORT, () => {

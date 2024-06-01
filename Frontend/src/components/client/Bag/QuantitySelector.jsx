@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { baseURL } from "../../../utils/baseURL"; // Adjust the import according to your project structure
+import { baseURL } from "../../../utils/baseURL";
 import { debounce } from "lodash";
 import AddIcon from "@mui/icons-material/Add";
 import RemoveIcon from "@mui/icons-material/Remove";
@@ -12,6 +12,7 @@ function QuantitySelector({
   product_quantity,
   product_current_price,
   setTotal,
+  getSubTotal, // Make sure the prop name is correct
 }) {
   const [quantity, setQuantity] = useState(product_quantity);
 
@@ -22,52 +23,35 @@ function QuantitySelector({
         product_id,
         quantity: newQuantity,
       });
+      // Call getSubTotal after updating quantity in the backend
+      getSubTotal();
     } catch (error) {
       console.error("Error updating quantity:", error);
     }
   }, 500);
 
-  const increaseQuantity = () => {
-    const newQuantity = quantity + 1;
-    setQuantity(newQuantity);
-    updateQuantityInBackend(newQuantity);
-    setTotal(newQuantity * product_current_price);
-  };
-
-  const decreaseQuantity = () => {
-    if (quantity > 1) {
-      const newQuantity = quantity - 1;
+  const changeQuantity = (delta) => {
+    const newQuantity = quantity + delta;
+    if (newQuantity > 0) {
       setQuantity(newQuantity);
-      updateQuantityInBackend(newQuantity);
       setTotal(newQuantity * product_current_price);
+      updateQuantityInBackend(newQuantity);
     }
   };
 
   useEffect(() => {
-    // Optionally, you can fetch the current quantity from the backend when the component mounts
-    const fetchQuantity = async () => {
-      try {
-        const response = await axios.get(`${baseURL}/cart`, {
-          params: { customer_id, product_id },
-        });
-        setQuantity(response.data.quantity);
-      } catch (error) {
-        console.error("Error fetching quantity:", error);
-      }
-    };
-
-    fetchQuantity();
-  }, [customer_id, product_id]);
+    setQuantity(product_quantity);
+  }, [product_quantity]);
 
   return (
     <div className="flex items-center space-x-4">
-      <IconButton onClick={decreaseQuantity}>
+      <IconButton onClick={() => changeQuantity(-1)}>
         <RemoveIcon />
       </IconButton>
       <div className="w-12 h-12 flex items-center justify-center bg-gray-200 rounded text-lg">
         {quantity}
       </div>
-      <IconButton onClick={increaseQuantity}>
+      <IconButton onClick={() => changeQuantity(1)}>
         <AddIcon />
       </IconButton>
     </div>
