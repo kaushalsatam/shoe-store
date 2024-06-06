@@ -6,10 +6,16 @@ import cors from "cors";
 import multer from "multer";
 import Razorpay from "razorpay";
 import crypto from "crypto";
+import bcrypt from "bcrypt";
+import cookieParser from "cookie-parser";
+import jwt from "jsonwebtoken";
 
 const app = express();
 const PORT = 3000;
 env.config();
+
+const saltRounds = 10;
+const secretKey = "TOPSECRET";
 
 // postgresql configuration
 const db = new pg.Client({
@@ -23,10 +29,35 @@ const db = new pg.Client({
 db.connect();
 
 // Middlewares
+
+// Token verification middleware
+const verifyToken = (req, res, next) => {
+  const token = req.headers.authorization;
+  // console.log(token);
+  if (token) {
+    jwt.verify(token, secretKey, (err, valid) => {
+      if (err) {
+        res.status(401).json({ message: "Enter valid token." });
+      } else {
+        next();
+      }
+    });
+  } else {
+    res.status(403).json({ message: "Enter authentication token." });
+  }
+};
+
 app.use(express.json());
 app.use(bodyParser.urlencoded({ extended: false }));
-app.use(cors());
+app.use(
+  cors({
+    origin: "http://localhost:5173",
+    credentials: true,
+  })
+);
+app.use(cookieParser());
 
+// Default GET endpoint
 app.get("/", async (req, res) => {
   res.json({ message: "Welcome to Solespace!" });
 });
@@ -90,11 +121,19 @@ app.post("/signup", async (req, res) => {
           "User with same email address already exists! Try using different email address",
       });
     } else {
-      const result = await db.query(
-        "INSERT INTO customers (name, email, phone, address, password) VALUES ($1, $2, $3, $4, $5);",
-        [name, email, phone, address, password]
-      );
-      res.status(200).json({ message: "You are signed up, please log in!" });
+      await bcrypt.hash(password, saltRounds, async (err, hash) => {
+        if (err) {
+          console.log("Error hashing the password", err);
+        } else {
+          const result = await db.query(
+            "INSERT INTO customers (name, email, phone, address, password) VALUES ($1, $2, $3, $4, $5);",
+            [name, email, phone, address, hash]
+          );
+          res
+            .status(200)
+            .json({ message: "You are signed up, please log in!" });
+        }
+      });
     }
   } catch (e) {
     console.log(e);
@@ -109,16 +148,32 @@ app.post("/login", async (req, res) => {
       "SELECT * FROM customers WHERE email = $1",
       [email]
     );
-    // console.log(result.rows);
     if (userCheck.rows.length > 0) {
-      const result = await db.query(
-        "SELECT * FROM customers WHERE email = $1 AND password = $2",
-        [email, password]
+      const user = userCheck.rows[0];
+      const storedHashedPassword = user.password;
+
+      const passwordMatch = await bcrypt.compare(
+        password,
+        storedHashedPassword
       );
-      if (result.rows.length > 0) {
+      if (passwordMatch) {
+        const token = jwt.sign(
+          { id: user.id, email: user.email },
+          secretKey, // Replace with your actual secret
+          { expiresIn: "2h" }
+        );
+
+        // Set token as a cookie
+        res.cookie("token", token, {
+          httpOnly: true, // Ensures the cookie is only accessible by the web server
+          secure: process.env.NODE_ENV === "production", // Ensures the cookie is sent over HTTPS
+          maxAge: 7200000, // 1 hour
+        });
+
         res.status(200).json({
           message: "You have successfully logged in!",
-          userData: result.rows[0],
+          userData: user,
+          authToken: token,
         });
       } else {
         res
@@ -293,11 +348,12 @@ app.get("/products/:id", async (req, res) => {
 
 // POST route to add product to cart/bag
 app.post("/addtobag", async (req, res) => {
-  const { customerId, productId, quantity } = req.body;
+  const { customerId, productId, quantity, size } = req.body;
+  // console.log(size);
   try {
     const check = await db.query(
-      "SELECT * FROM cart WHERE customer_id = $1 AND product_id = $2",
-      [customerId, productId]
+      "SELECT * FROM cart WHERE customer_id = $1 AND product_id = $2 AND size = $3",
+      [customerId, productId, size]
     );
     if (check.rows.length > 0) {
       const result = await db.query(
@@ -307,8 +363,8 @@ app.post("/addtobag", async (req, res) => {
       res.status(200).json({ message: "Product added to cart!" });
     } else {
       const result = await db.query(
-        "INSERT INTO cart (customer_id, product_id, quantity) VALUES ($1, $2, $3)",
-        [customerId, productId, quantity]
+        "INSERT INTO cart (customer_id, product_id, quantity, size) VALUES ($1, $2, $3, $4)",
+        [customerId, productId, quantity, size]
       );
       // console.log(quantity);
     }
@@ -317,7 +373,8 @@ app.post("/addtobag", async (req, res) => {
   }
 });
 
-app.get("/bag", async (req, res) => {
+app.get("/bag", verifyToken, async (req, res) => {
+  // console.log(req.headers.authorization);
   const { id } = req.query;
   try {
     const result = await db.query(
@@ -379,7 +436,8 @@ app.get("/cart", async (req, res) => {
   res.json(result.rows[0]);
 });
 
-app.post("/order", async (req, res) => {
+// Create order endpoint
+app.post("/order", verifyToken, async (req, res) => {
   try {
     const razorpay = new Razorpay({
       key_id: process.env.RAZORPAY_KEY_ID,
@@ -406,25 +464,73 @@ app.post("/order", async (req, res) => {
   }
 });
 
-app.post("/order/validate", async (req, res) => {
-  // console.log(req.body.body.id);
-  const { razorpay_payment_id, razorpay_order_id, razorpay_signature, id } =
-    req.body.body;
+// Order validation endpoint
+app.post("/order/validate", verifyToken, async (req, res) => {
+  const {
+    razorpay_payment_id,
+    razorpay_order_id,
+    razorpay_signature,
+    id, // customer_id
+    amount,
+  } = req.body.body;
 
   const sha = crypto.createHmac("sha256", process.env.RAZORPAY_KEY_SECRET);
   sha.update(`${razorpay_order_id}|${razorpay_payment_id}`);
   const digest = sha.digest("hex");
+
   if (digest !== razorpay_signature) {
-    res.status(400).json({ message: "Transaction failed!" });
-  } else {
+    return res.status(400).json({ message: "Transaction failed!" });
+  }
+
+  try {
+    // Begin transaction
+    await db.query("BEGIN");
+
+    // Insert order into orders table
+    const orderResult = await db.query(
+      "INSERT INTO orders (customer_id, date, total_amount, shipping_method, order_status) VALUES ($1, CURRENT_DATE, $2, 'Free Shipping', 'In Progress') RETURNING id",
+      [id, amount]
+    );
+    const orderId = orderResult.rows[0].id;
+
+    // Insert transaction into transaction table
+    await db.query(
+      "INSERT INTO transactions (order_id, payment_method, amount, date) VALUES ($1, 'Razorpay', $2, CURRENT_DATE)",
+      [orderId, amount]
+    );
+
+    // Retrieve items from customer's cart
+    const cartItemsResult = await db.query(
+      "SELECT * FROM cart WHERE customer_id = $1",
+      [id]
+    );
+    const cartItems = cartItemsResult.rows;
+
+    // Insert each item into order_items table
+    for (const item of cartItems) {
+      await db.query(
+        "INSERT INTO order_items (order_id, product_id, quantity, price) VALUES ($1, $2, $3, $4)",
+        [orderId, item.product_id, item.quantity, item.price]
+      );
+    }
+
+    // Clear the customer's cart
+    await db.query("DELETE FROM cart WHERE customer_id = $1", [id]);
+
+    // Commit transaction
+    await db.query("COMMIT");
+
     res.json({
       message: "Transaction successful!",
       orderId: razorpay_order_id,
       paymentId: razorpay_payment_id,
     });
-    await db.query("DELETE FROM cart WHERE customer_id = $1", [id]);
+  } catch (error) {
+    // Rollback transaction in case of error
+    await db.query("ROLLBACK");
+    console.error(error);
+    res.status(500).json({ message: "Internal server error" });
   }
-  // console.log(req.body);
 });
 
 app.listen(PORT, () => {

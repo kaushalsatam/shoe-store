@@ -5,10 +5,12 @@ import axios from "axios";
 import Carousel from "./Carousel";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import SizeGrid from "./SizeGrid";
 
 function ProductDetails({ isAuthenticated, customerData, notify }) {
   const [productData, setProductData] = useState(null);
   const [quantity, setQuantity] = useState(1);
+  const [size, setSize] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const { id } = useParams();
@@ -23,6 +25,7 @@ function ProductDetails({ isAuthenticated, customerData, notify }) {
           customerId,
           productId,
           quantity,
+          size,
         });
         console.log(request.data);
       } else {
@@ -73,6 +76,7 @@ function ProductDetails({ isAuthenticated, customerData, notify }) {
           </span>
         </div>
         <p className="text-lg">{productData.description}</p>
+        <SizeGrid setSize={setSize} />
         <button
           className="border p-4 mx-4 bg-black hover:bg-gray-900 text-white rounded-full font-semibold"
           onClick={() => {

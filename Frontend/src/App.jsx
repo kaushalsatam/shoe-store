@@ -33,6 +33,8 @@ function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [customerData, setCustomerData] = useState([]);
 
+  // setIsAuthenticated(localStorage.getItem("authToken") ? true : false);
+
   const notify = () => {
     toast("Please Log in!");
   };

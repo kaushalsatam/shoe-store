@@ -11,10 +11,13 @@ function Login({ setIsAuthenticated, setCustomerData }) {
 
   const handleLogin = async (data) => {
     try {
-      const result = await axios.post("http://localhost:3000/login", data);
+      const result = await axios.post("http://localhost:3000/login", data, {
+        withCredentials: true,
+      });
       console.log(result.data);
-      if (result.status == 200) {
+      if (result.data.authToken) {
         setIsAuthenticated(true);
+        localStorage.setItem("authToken", result.data.authToken);
         setCustomerData(result.data.userData);
         navigate("/");
         toast.success(result.data.message);
