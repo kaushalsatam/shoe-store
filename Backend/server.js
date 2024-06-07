@@ -26,6 +26,15 @@ const db = new pg.Client({
   port: process.env.PG_PORT,
 });
 
+// NEON Configurations
+// const connectionString = process.env.DATABASE_URL;
+// const db = new pg.Client({
+//   connectionString,
+//   ssl: {
+//     rejectUnauthorized: false,
+//   },
+// });
+
 db.connect();
 
 // Middlewares
@@ -103,6 +112,24 @@ app.get("/allProducts", async (req, res) => {
   } catch (e) {
     console.log(e);
     res.status(400).json({ message: "Internal server error" });
+  }
+});
+
+app.get("/get-orders", async (req, res) => {
+  try {
+    const result = await db.query("SELECT * FROM orders");
+    res.status(200).json(result.rows);
+  } catch (e) {
+    console.log(e);
+  }
+});
+
+app.get("/get-transactions", async (req, res) => {
+  try {
+    const result = await db.query("SELECT * FROM transactions");
+    res.status(200).json(result.rows);
+  } catch (e) {
+    console.log(e);
   }
 });
 
@@ -437,7 +464,7 @@ app.get("/cart", async (req, res) => {
 });
 
 // Create order endpoint
-app.post("/order", verifyToken, async (req, res) => {
+app.post("/order", async (req, res) => {
   try {
     const razorpay = new Razorpay({
       key_id: process.env.RAZORPAY_KEY_ID,
@@ -465,7 +492,7 @@ app.post("/order", verifyToken, async (req, res) => {
 });
 
 // Order validation endpoint
-app.post("/order/validate", verifyToken, async (req, res) => {
+app.post("/order/validate", async (req, res) => {
   const {
     razorpay_payment_id,
     razorpay_order_id,
