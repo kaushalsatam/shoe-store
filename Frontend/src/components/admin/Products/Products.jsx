@@ -108,7 +108,7 @@ function Products() {
           </tbody>
         </table>
       </div>
-      <div className="add-product flex justify-end m-4">
+      <div className="add-product flex justify-start m-4">
         <NavLink to={"/admin/addProduct"}>
           <IconButton aria-label="add">
             <AddIcon fontSize="large" />

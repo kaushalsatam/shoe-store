@@ -30,6 +30,7 @@ function Bag({ customerData }) {
     try {
       const response = await axios.get(`${baseURL}/get-subtotal`, {
         params: { id },
+        headers: { Authorization: localStorage.getItem("authToken") },
       });
       // console.log("Subtotal response:", response.data); // Debugging
       setSubtotal(response.data.subtotal);
