@@ -301,7 +301,7 @@ app.post(
 app.get("/getProducts", async (req, res) => {
   const category = req.query.category;
   const gender = req.query.gender;
-  const limit = parseInt(req.query.limit) || 10; // Default limit to 10 if not provided
+  const limit = parseInt(req.query.limit) || 6; // Default limit to 10 if not provided
   const offset = parseInt(req.query.offset) || 0; // Default offset to 0 if not provided
 
   let query = `
