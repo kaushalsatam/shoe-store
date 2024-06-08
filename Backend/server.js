@@ -18,22 +18,22 @@ const saltRounds = 10;
 const secretKey = "TOPSECRET";
 
 // postgresql configuration
-// const db = new pg.Client({
-//   user: process.env.PG_USER,
-//   host: process.env.PG_HOST,
-//   database: process.env.PG_DATABASE,
-//   password: process.env.PG_PASSWORD,
-//   port: process.env.PG_PORT,
-// });
+const db = new pg.Client({
+  user: process.env.PG_USER,
+  host: process.env.PG_HOST,
+  database: process.env.PG_DATABASE,
+  password: process.env.PG_PASSWORD,
+  port: process.env.PG_PORT,
+});
 
 // NEON Configurations
-const connectionString = process.env.DATABASE_URL;
-const db = new pg.Client({
-  connectionString,
-  ssl: {
-    rejectUnauthorized: false,
-  },
-});
+// const connectionString = process.env.DATABASE_URL;
+// const db = new pg.Client({
+//   connectionString,
+//   ssl: {
+//     rejectUnauthorized: false,
+//   },
+// });
 
 db.connect();
 
@@ -298,28 +298,77 @@ app.post(
 );
 
 // GET route for all details of products
+// app.get("/getProducts", async (req, res) => {
+//   const category = req.query.category;
+//   const gender = req.query.gender;
+//   if (gender) {
+//     const request = await db.query(
+//       "SELECT p.id, p.name, p.brand, p.description, p.original_price, p.current_price, p.category, p.gender, p.stock_quantity, pi.main, pi.left_view, pi.right_view, pi.top_view, pi.bottom_view FROM products p JOIN products_images pi ON p.id = pi.product_id WHERE p.gender = $1",
+//       [gender]
+//     );
+//     res.status(200).json(request.rows);
+//   } else if (category) {
+//     const request = await db.query(
+//       "SELECT p.id, p.name, p.brand, p.description, p.original_price, p.current_price, p.category, p.gender, p.stock_quantity, pi.main, pi.left_view, pi.right_view, pi.top_view, pi.bottom_view FROM products p JOIN products_images pi ON p.id = pi.product_id WHERE p.category = $1",
+//       [category]
+//     );
+//     res.status(200).json(request.rows);
+//   } else {
+//     const request = await db.query(
+//       "SELECT p.id, p.name, p.brand, p.description, p.original_price, p.current_price, p.category, p.gender, p.stock_quantity, pi.main, pi.left_view, pi.right_view, pi.top_view, pi.bottom_view FROM products p JOIN products_images pi ON p.id = pi.product_id"
+//     );
+//     res.status(200).json(request.rows);
+//   }
+// });
+
 app.get("/getProducts", async (req, res) => {
   const category = req.query.category;
   const gender = req.query.gender;
   if (gender) {
-    const request = await db.query(
-      "SELECT p.id, p.name, p.brand, p.description, p.original_price, p.current_price, p.category, p.gender, p.stock_quantity, pi.main, pi.left_view, pi.right_view, pi.top_view, pi.bottom_view FROM products p JOIN products_images pi ON p.id = pi.product_id WHERE p.gender = $1",
-      [gender]
-    );
+    const request = await db.query("SELECT * FROM products WHERE gender = $1", [
+      gender,
+    ]);
     res.status(200).json(request.rows);
   } else if (category) {
     const request = await db.query(
-      "SELECT p.id, p.name, p.brand, p.description, p.original_price, p.current_price, p.category, p.gender, p.stock_quantity, pi.main, pi.left_view, pi.right_view, pi.top_view, pi.bottom_view FROM products p JOIN products_images pi ON p.id = pi.product_id WHERE p.category = $1",
+      "SELECT * FROM products WHERE category = $1",
       [category]
     );
     res.status(200).json(request.rows);
   } else {
-    const request = await db.query(
-      "SELECT p.id, p.name, p.brand, p.description, p.original_price, p.current_price, p.category, p.gender, p.stock_quantity, pi.main, pi.left_view, pi.right_view, pi.top_view, pi.bottom_view FROM products p JOIN products_images pi ON p.id = pi.product_id"
-    );
+    const request = await db.query("SELECT * FROM products");
     res.status(200).json(request.rows);
   }
 });
+
+app.get("/getImage", async (req, res) => {
+  try {
+    const { id } = req.query;
+    // console.log(id);
+
+    if (!id) {
+      return res.status(400).json({ message: "Product ID is required" });
+    }
+
+    const result = await db.query(
+      "SELECT left_view FROM products_images WHERE product_id = $1",
+      [id]
+    );
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({ message: "Image not found" });
+    }
+
+    const imageData = result.rows[0].left_view;
+
+    // Assuming the image data is stored as binary data (e.g., in a BYTEA column in PostgreSQL)
+    res.status(200).send(imageData);
+  } catch (error) {
+    console.error("Error fetching image:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+});
+
 // DELETE route for deleting Products
 app.delete("/deleteProduct/:id", async (req, res) => {
   const id = parseInt(req.params.id);

@@ -2,21 +2,36 @@ import { useEffect, useState } from "react";
 import { Button } from "@mui/material";
 import ShoppingBag from "@mui/icons-material/ShoppingBag";
 import { NavLink } from "react-router-dom";
+import axios from "axios";
+import { baseURL } from "../../../utils/baseURL";
 
 const ProductCard = ({ cardData }) => {
   const [imageSrc, setImageSrc] = useState("");
 
-  useEffect(() => {
-    if (cardData.left_view.data) {
-      // Create a Uint8Array from the binary data
-      const binaryData = new Uint8Array(cardData.left_view.data);
+  async function getProductData(id) {
+    try {
+      const response = await axios.get(`${baseURL}/getImage`, {
+        params: { id },
+        responseType: "arraybuffer", // Ensure the response is in the right format
+      });
       // Convert the binary data to a base64 string
       const base64String = btoa(
-        binaryData.reduce((data, byte) => data + String.fromCharCode(byte), "")
+        new Uint8Array(response.data).reduce(
+          (data, byte) => data + String.fromCharCode(byte),
+          ""
+        )
       );
       setImageSrc(`data:image/jpeg;base64,${base64String}`);
+    } catch (error) {
+      console.error("Error fetching product data:", error);
     }
-  }, [cardData.left_view.data]);
+  }
+
+  useEffect(() => {
+    if (cardData.id) {
+      getProductData(cardData.id);
+    }
+  }, [cardData.id]);
 
   return (
     <div className="max-w-xs mx-auto bg-white rounded-lg shadow-md overflow-hidden transition-transform duration-300 hover:scale-105">
