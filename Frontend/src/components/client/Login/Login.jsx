@@ -5,13 +5,14 @@ import axios from "axios";
 import { NavLink, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { baseURL } from "../../../utils/baseURL";
 
 function Login({ setIsAuthenticated, setCustomerData }) {
   const navigate = useNavigate();
 
   const handleLogin = async (data) => {
     try {
-      const result = await axios.post("http://localhost:3000/login", data, {
+      const result = await axios.post(`${baseURL}/login`, data, {
         withCredentials: true,
       });
       console.log(result.data);

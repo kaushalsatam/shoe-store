@@ -60,7 +60,7 @@ app.use(express.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(
   cors({
-    origin: ["https://solespace-ecommerce.vercel.app", "http://localhost:3000"],
+    origin: ["https://solespace-ecommerce.vercel.app", "http://localhost:5173"],
     credentials: true,
     optionsSuccessStatus: 200,
   })
