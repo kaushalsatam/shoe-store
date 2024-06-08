@@ -60,8 +60,9 @@ app.use(express.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(
   cors({
-    origin: "http://localhost:5173",
+    origin: ["https://solespace-ecommerce.vercel.app", "http://localhost:3000"],
     credentials: true,
+    optionsSuccessStatus: 200,
   })
 );
 app.use(cookieParser());
