@@ -300,23 +300,35 @@ app.post(
 app.get("/getProducts", async (req, res) => {
   const category = req.query.category;
   const gender = req.query.gender;
+  const limit = parseInt(req.query.limit) || 10; // Default limit to 10 if not provided
+  const offset = parseInt(req.query.offset) || 0; // Default offset to 0 if not provided
+
+  let query = `
+    SELECT 
+      p.id, p.name, p.brand, p.description, p.original_price, p.current_price, 
+      p.category, p.gender, p.stock_quantity, pi.main, pi.left_view, pi.right_view, 
+      pi.top_view, pi.bottom_view 
+    FROM products p 
+    JOIN products_images pi ON p.id = pi.product_id 
+  `;
+  let queryParams = [];
+
   if (gender) {
-    const request = await db.query(
-      "SELECT p.id, p.name, p.brand, p.description, p.original_price, p.current_price, p.category, p.gender, p.stock_quantity, pi.main, pi.left_view, pi.right_view, pi.top_view, pi.bottom_view FROM products p JOIN products_images pi ON p.id = pi.product_id WHERE p.gender = $1",
-      [gender]
-    );
-    res.status(200).json(request.rows);
+    query += "WHERE p.gender = $1 ";
+    queryParams.push(gender);
   } else if (category) {
-    const request = await db.query(
-      "SELECT p.id, p.name, p.brand, p.description, p.original_price, p.current_price, p.category, p.gender, p.stock_quantity, pi.main, pi.left_view, pi.right_view, pi.top_view, pi.bottom_view FROM products p JOIN products_images pi ON p.id = pi.product_id WHERE p.category = $1",
-      [category]
-    );
+    query += "WHERE p.category = $1 ";
+    queryParams.push(category);
+  }
+
+  query += "LIMIT $2 OFFSET $3";
+  queryParams.push(limit, offset);
+
+  try {
+    const request = await db.query(query, queryParams);
     res.status(200).json(request.rows);
-  } else {
-    const request = await db.query(
-      "SELECT p.id, p.name, p.brand, p.description, p.original_price, p.current_price, p.category, p.gender, p.stock_quantity, pi.main, pi.left_view, pi.right_view, pi.top_view, pi.bottom_view FROM products p JOIN products_images pi ON p.id = pi.product_id"
-    );
-    res.status(200).json(request.rows);
+  } catch (error) {
+    res.status(500).json({ error: "Database query failed" });
   }
 });
 
