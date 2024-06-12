@@ -21,7 +21,6 @@ import Signup from "./components/client/Signup/Signup.jsx";
 const LazyClientProducts = lazy(() =>
   import("./components/client/Products/Products.jsx")
 );
-import Checkout from "./components/client/Checkout/Checkout.jsx";
 import AddProduct from "./components/admin/Products/AddProduct.jsx";
 import ClientProductDetails from "./components/client/Products/ProductDetails.jsx";
 import UserLogin from "./components/client/Login/Login.jsx";
@@ -96,7 +95,6 @@ function App() {
               )
             }
           >
-            <Route path="checkout" element={<Checkout />} />
             <Route path="bag" element={<Bag customerData={customerData} />} />
             <Route
               path="profile"

@@ -45,7 +45,7 @@ function Bag({ customerData }) {
     return `receipt_${new Date().getTime()}`;
   };
 
-  const handleCheckout = async () => {
+  const handleCheckout = async (e) => {
     const receipt = generateReceipt();
     try {
       const response = await axios.post(`${baseURL}/order`, {
@@ -78,7 +78,7 @@ function Bag({ customerData }) {
               },
             }
           );
-          // console.log(validateResponse.data);
+          console.log(validateResponse.data);
           navigate("/products");
         },
         prefill: {
