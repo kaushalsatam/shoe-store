@@ -117,11 +117,67 @@ app.get("/allProducts", async (req, res) => {
 });
 
 app.get("/get-orders", async (req, res) => {
+  const { id, status } = req.query; // Change to req.query to handle status query parameter
   try {
-    const result = await db.query("SELECT * FROM orders");
+    let result;
+    if (id && status) {
+      result = await db.query(
+        "SELECT * FROM orders WHERE customer_id = $1 AND order_status = $2",
+        [id, status]
+      );
+    } else if (id) {
+      result = await db.query("SELECT * FROM orders WHERE customer_id = $1", [
+        id,
+      ]);
+    } else if (status) {
+      result = await db.query("SELECT * FROM orders WHERE order_status = $1", [
+        status,
+      ]);
+    } else {
+      result = await db.query("SELECT * FROM orders");
+    }
     res.status(200).json(result.rows);
   } catch (e) {
     console.log(e);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
+app.get("/get-orders/products", async (req, res) => {
+  const { orderId } = req.query;
+  try {
+    const result = await db.query(
+      "SELECT * FROM order_items JOIN products ON order_items.product_id = products.id WHERE order_id = $1",
+      [orderId]
+    );
+    res.status(200).json(result.rows);
+  } catch (e) {
+    console.log(e);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
+app.get("/order-details", async (req, res) => {
+  const { id } = req.query;
+  const result = await db.query(
+    "SELECT o.id, o.date, o.total_amount, o.order_status, oi.quantity, p.id as product_id, p.name as product_name, c.name as customer_name, c.email, c.phone, c.address FROM orders o JOIN order_items oi ON o.id = oi.order_id JOIN products p ON oi.product_id = p.id JOIN customers c ON o.customer_id = c.id WHERE o.id = $1",
+    [id]
+  );
+  res.status(200).json(result.rows);
+});
+
+app.patch("/update-order-status", async (req, res) => {
+  const { id } = req.query;
+  try {
+    const result = await db.query(
+      "UPDATE orders SET order_status = 'Completed' WHERE id = $1",
+      [id]
+    );
+    res.status(200).json({ message: "Order status changed to Completed!" });
+  } catch (error) {
+    res
+      .status(500)
+      .json({ error: "An error occurred while updating the order status." });
   }
 });
 
@@ -564,14 +620,14 @@ app.post("/order/validate", async (req, res) => {
 
     // Insert order into orders table
     const orderResult = await db.query(
-      "INSERT INTO orders (customer_id, date, total_amount, shipping_method, order_status) VALUES ($1, CURRENT_DATE, $2, 'Free Shipping', 'In Progress') RETURNING id",
+      "INSERT INTO orders (customer_id, date, total_amount, shipping_method, order_status) VALUES ($1, CURRENT_DATE, $2, 'Free Shipping', 'Placed') RETURNING id",
       [id, amount]
     );
     const orderId = orderResult.rows[0].id;
 
     // Insert transaction into transaction table
     await db.query(
-      "INSERT INTO transactions (order_id, payment_method, amount, date) VALUES ($1, 'Razorpay', $2, CURRENT_DATE)",
+      "INSERT INTO transactions (order_id, payment_method, amount, date, transaction_status) VALUES ($1, 'Razorpay', $2, CURRENT_DATE, 'Successful')",
       [orderId, amount]
     );
 

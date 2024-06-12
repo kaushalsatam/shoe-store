@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { Suspense, lazy, useState } from "react";
 import {
   Route,
   createBrowserRouter,
@@ -17,16 +17,23 @@ import Transactions from "./components/admin/Transactions/Transactions.jsx";
 import Login from "./components/admin/Login/Login.jsx";
 import { adminContext } from "./components/admin/Context/adminContext.js";
 import Signup from "./components/client/Signup/Signup.jsx";
-import ClientProducts from "./components/client/Products/Products.jsx";
+// import ClientProducts from "./components/client/Products/Products.jsx";
+const LazyClientProducts = lazy(() =>
+  import("./components/client/Products/Products.jsx")
+);
 import Checkout from "./components/client/Checkout/Checkout.jsx";
 import AddProduct from "./components/admin/Products/AddProduct.jsx";
 import ClientProductDetails from "./components/client/Products/ProductDetails.jsx";
 import UserLogin from "./components/client/Login/Login.jsx";
 import { clientContext } from "./components/client/Context/clientContext.js";
 import Bag from "./components/client/Bag/Bag.jsx";
+import Profile from "./components/client/Profile/Profile.jsx";
 
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import CustomerOrders from "./components/client/CustomerOrders/CustomerOrders.jsx";
+import OrderDetails from "./components/admin/Orders/OrderDetails.jsx";
+// import { CircularProgress } from "@mui/material";
 
 function App() {
   const [isAdminAuthenticated, setIsAdminAuthenticated] = useState(false);
@@ -45,7 +52,14 @@ function App() {
         <Route path="/" element={<ClientLayout />}>
           <Route index element={<ClientHome />} />
           <Route path="signup" element={<Signup />} />
-          <Route path="products" element={<ClientProducts />} />
+          <Route
+            path="products"
+            element={
+              <Suspense fallback={"Loading..."}>
+                <LazyClientProducts />
+              </Suspense>
+            }
+          />
           <Route
             path="product-details/:id"
             element={
@@ -84,6 +98,14 @@ function App() {
           >
             <Route path="checkout" element={<Checkout />} />
             <Route path="bag" element={<Bag customerData={customerData} />} />
+            <Route
+              path="profile"
+              element={<Profile customerData={customerData} />}
+            />
+            <Route
+              path="orders"
+              element={<CustomerOrders customerData={customerData} />}
+            />
           </Route>
         </Route>
         <Route
@@ -110,6 +132,7 @@ function App() {
           <Route path="orders" element={<Orders />} />
           <Route path="transactions" element={<Transactions />} />
           <Route path="addProduct" element={<AddProduct />} />
+          <Route path="orders/:id" element={<OrderDetails />} />
         </Route>
       </Route>
     )

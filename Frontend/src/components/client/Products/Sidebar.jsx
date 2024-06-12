@@ -12,7 +12,7 @@ import {
 } from "@mui/material";
 import { useState } from "react";
 
-const Sidebar = () => {
+const Sidebar = ({ setSearch }) => {
   const [sort, setSort] = useState("");
   const [category, setCategory] = useState("");
 
@@ -29,6 +29,7 @@ const Sidebar = () => {
         <h2 className="text-xl font-bold mb-4">Search</h2>
         <TextField
           id="input-with-icon-textfield"
+          onChange={(e) => setSearch(e.target.value)}
           InputProps={{
             startAdornment: (
               <InputAdornment position="start">

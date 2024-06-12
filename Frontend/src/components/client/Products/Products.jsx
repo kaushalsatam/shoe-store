@@ -6,6 +6,8 @@ import axios from "axios";
 import { useLocation } from "react-router-dom";
 
 function Products() {
+  const [search, setSearch] = useState("");
+  console.log(search);
   const [products, setProducts] = useState([]);
   const location = useLocation();
 
@@ -29,11 +31,17 @@ function Products() {
 
   return (
     <div className="products-container flex">
-      <Sidebar />
+      <Sidebar setSearch={setSearch} />
       <div className="ml-64 flex flex-wrap gap-4 justify-around p-12">
-        {products.map((data) => (
-          <ProductCard key={data.id} cardData={data} />
-        ))}
+        {products
+          .filter((data) => {
+            return search.toLowerCase() === ""
+              ? data
+              : data.name.toLowerCase().includes(search);
+          })
+          .map((data) => (
+            <ProductCard key={data.id} cardData={data} />
+          ))}
       </div>
     </div>
   );

@@ -78,9 +78,11 @@ export default function AccountMenu() {
         transformOrigin={{ horizontal: "right", vertical: "top" }}
         anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
       >
-        <MenuItem onClick={handleClose}>
-          <Avatar /> My account
-        </MenuItem>
+        <NavLink to={"/user/profile"}>
+          <MenuItem onClick={handleClose}>
+            <Avatar /> My account
+          </MenuItem>
+        </NavLink>
         <Divider />
         <NavLink to={"/signup"}>
           <MenuItem onClick={handleClose}>

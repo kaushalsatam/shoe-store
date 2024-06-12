@@ -63,7 +63,13 @@ function ProductDetails({ isAuthenticated, customerData, notify }) {
 
   return (
     <div className="grid grid-cols-2">
-      {productData ? <Carousel productData={productData} /> : "No product data"}
+      <div className="flex items-start">
+        {productData ? (
+          <Carousel productData={productData} />
+        ) : (
+          "No product data"
+        )}
+      </div>
       <div className="data p-8 flex flex-col gap-4">
         <h1 className="font-black text-4xl">{productData.name}</h1>
         <h2 className="text-xl">

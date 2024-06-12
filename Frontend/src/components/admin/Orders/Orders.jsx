@@ -1,14 +1,23 @@
 import { useEffect, useState } from "react";
-import { baseURL } from "../../../utils/baseURL.js";
+import { baseURL } from "../../../utils/baseURL";
 import axios from "axios";
+import { NavLink } from "react-router-dom";
 
 function Orders() {
   const [ordersData, setOrdersData] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   const getData = async () => {
-    const request = await axios.get(`${baseURL}/get-orders`);
-    // console.log(request.data);
-    setOrdersData(request.data);
+    try {
+      const request = await axios.get(`${baseURL}/get-orders`);
+      setOrdersData(request.data);
+    } catch (error) {
+      setError("Error fetching orders data.");
+      console.error("Error fetching orders:", error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const formatDate = (dateString) => {
@@ -21,9 +30,13 @@ function Orders() {
   }, []);
 
   return (
-    <div>
-      <div className="container mx-auto">
-        <div className="bg-white shadow-md rounded-lg overflow-hidden">
+    <div className="container mx-auto">
+      <div className="bg-white shadow-md rounded-lg overflow-hidden">
+        {loading ? (
+          <div className="p-4 text-center">Loading...</div>
+        ) : error ? (
+          <div className="p-4 text-center text-red-500">{error}</div>
+        ) : (
           <table className="min-w-full leading-normal">
             <thead>
               <tr>
@@ -47,33 +60,62 @@ function Orders() {
                 </th>
               </tr>
             </thead>
-
             <tbody>
-              {ordersData.map((data) => (
-                <tr key={data.id}>
+              {ordersData.map((order) => (
+                <tr key={order.id} className="hover:bg-gray-100 cursor-pointer">
                   <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                    {data.id}
+                    <NavLink
+                      to={`/admin/orders/${order.id}`}
+                      className="block h-full w-full"
+                    >
+                      {order.id}
+                    </NavLink>
                   </td>
                   <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                    {data.customer_id}
+                    <NavLink
+                      to={`/admin/orders/${order.id}`}
+                      className="block h-full w-full"
+                    >
+                      {order.customer_id}
+                    </NavLink>
                   </td>
                   <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                    {formatDate(data.date)}
+                    <NavLink
+                      to={`/admin/orders/${order.id}`}
+                      className="block h-full w-full"
+                    >
+                      {formatDate(order.date)}
+                    </NavLink>
                   </td>
                   <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                    {data.total_amount}
+                    <NavLink
+                      to={`/admin/orders/${order.id}`}
+                      className="block h-full w-full"
+                    >
+                      {order.total_amount}
+                    </NavLink>
                   </td>
                   <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                    {data.shipping_method}
+                    <NavLink
+                      to={`/admin/orders/${order.id}`}
+                      className="block h-full w-full"
+                    >
+                      {order.shipping_method}
+                    </NavLink>
                   </td>
                   <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                    {data.order_status}
+                    <NavLink
+                      to={`/admin/orders/${order.id}`}
+                      className="block h-full w-full"
+                    >
+                      {order.order_status}
+                    </NavLink>
                   </td>
                 </tr>
               ))}
             </tbody>
           </table>
-        </div>
+        )}
       </div>
     </div>
   );
