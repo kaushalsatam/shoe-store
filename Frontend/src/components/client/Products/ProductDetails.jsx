@@ -6,14 +6,15 @@ import Carousel from "./Carousel";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import SizeGrid from "./SizeGrid";
+import { useLoading } from "../../../Context/LoadingContext"; // Import the loading context
 
 function ProductDetails({ isAuthenticated, customerData, notify }) {
   const [productData, setProductData] = useState(null);
   const [quantity, setQuantity] = useState(1);
   const [size, setSize] = useState(null);
-  const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const { id } = useParams();
+  const { setLoading } = useLoading(); // Use the loading context
 
   async function addToBag(id) {
     try {
@@ -39,6 +40,7 @@ function ProductDetails({ isAuthenticated, customerData, notify }) {
 
   useEffect(() => {
     async function getProductData(id) {
+      setLoading(true); // Set loading to true when starting the data fetch
       try {
         const response = await axios.get(`${baseURL}/products/${id}`);
         setProductData(response.data[0]);
@@ -46,29 +48,25 @@ function ProductDetails({ isAuthenticated, customerData, notify }) {
         setError("Error fetching product data");
         console.error(error);
       } finally {
-        setLoading(false);
+        setLoading(false); // Set loading to false after the data fetch is complete
       }
     }
 
     getProductData(id);
-  }, [id]);
-
-  if (loading) {
-    return <div>Loading...</div>;
-  }
+  }, [id, setLoading]);
 
   if (error) {
     return <div>{error}</div>;
   }
 
+  if (!productData) {
+    return <div>Loading...</div>;
+  }
+
   return (
     <div className="grid grid-cols-2">
       <div className="flex items-start">
-        {productData ? (
-          <Carousel productData={productData} />
-        ) : (
-          "No product data"
-        )}
+        <Carousel productData={productData} />
       </div>
       <div className="data p-8 flex flex-col gap-4">
         <h1 className="font-black text-4xl">{productData.name}</h1>

@@ -18,22 +18,22 @@ const saltRounds = 10;
 const secretKey = "TOPSECRET";
 
 // postgresql configuration
-// const db = new pg.Client({
-//   user: process.env.PG_USER,
-//   host: process.env.PG_HOST,
-//   database: process.env.PG_DATABASE,
-//   password: process.env.PG_PASSWORD,
-//   port: process.env.PG_PORT,
-// });
+const db = new pg.Client({
+  user: process.env.PG_USER,
+  host: process.env.PG_HOST,
+  database: process.env.PG_DATABASE,
+  password: process.env.PG_PASSWORD,
+  port: process.env.PG_PORT,
+});
 
 // NEON Configurations
-const connectionString = process.env.DATABASE_URL;
-const db = new pg.Client({
-  connectionString,
-  ssl: {
-    rejectUnauthorized: false,
-  },
-});
+// const connectionString = process.env.DATABASE_URL;
+// const db = new pg.Client({
+//   connectionString,
+//   ssl: {
+//     rejectUnauthorized: false,
+//   },
+// });
 
 db.connect();
 
@@ -160,7 +160,7 @@ app.get("/get-orders/products", async (req, res) => {
 app.get("/order-details", async (req, res) => {
   const { id } = req.query;
   const result = await db.query(
-    "SELECT o.id, o.date, o.total_amount, o.order_status, oi.quantity, p.id as product_id, p.name as product_name, c.name as customer_name, c.email, c.phone, c.address FROM orders o JOIN order_items oi ON o.id = oi.order_id JOIN products p ON oi.product_id = p.id JOIN customers c ON o.customer_id = c.id WHERE o.id = $1",
+    "SELECT o.id, o.date, o.total_amount, o.order_status, oi.quantity, oi.size, p.id as product_id, p.name as product_name, c.name as customer_name, c.email, c.phone, c.address FROM orders o JOIN order_items oi ON o.id = oi.order_id JOIN products p ON oi.product_id = p.id JOIN customers c ON o.customer_id = c.id WHERE o.id = $1",
     [id]
   );
   res.status(200).json(result.rows);
@@ -641,8 +641,8 @@ app.post("/order/validate", async (req, res) => {
     // Insert each item into order_items table
     for (const item of cartItems) {
       await db.query(
-        "INSERT INTO order_items (order_id, product_id, quantity, price) VALUES ($1, $2, $3, $4)",
-        [orderId, item.product_id, item.quantity, item.price]
+        "INSERT INTO order_items (order_id, product_id, quantity, size) VALUES ($1, $2, $3, $4)",
+        [orderId, item.product_id, item.quantity, item.size]
       );
     }
 

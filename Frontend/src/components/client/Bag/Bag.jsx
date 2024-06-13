@@ -6,13 +6,16 @@ import PaymentDetails from "./PaymentDetails";
 import { NavLink, useNavigate } from "react-router-dom";
 import sadBag from "../../../assets/Sad Bag.png";
 import brand from "../../../assets/Brand.svg";
+import { useLoading } from "../../../Context/LoadingContext"; // Import the loading context
 
 function Bag({ customerData }) {
   const [bag, setBag] = useState([]);
   const [subtotal, setSubtotal] = useState(0);
   const navigate = useNavigate();
+  const { setLoading } = useLoading(); // Use the loading context
 
   async function getBagData() {
+    setLoading(true); // Set loading to true when starting the data fetch
     const id = customerData.id;
     try {
       const response = await axios.get(`${baseURL}/bag`, {
@@ -22,25 +25,28 @@ function Bag({ customerData }) {
       setBag(response.data);
     } catch (error) {
       console.error("Error fetching bag data", error);
+    } finally {
+      setLoading(false); // Set loading to false after the data fetch is complete
     }
   }
 
   async function getSubTotal() {
+    setLoading(true); // Set loading to true when starting the data fetch
     const id = customerData.id;
     try {
       const response = await axios.get(`${baseURL}/get-subtotal`, {
         params: { id },
         headers: { Authorization: localStorage.getItem("authToken") },
       });
-      // console.log("Subtotal response:", response.data); // Debugging
       setSubtotal(response.data.subtotal);
     } catch (error) {
       console.error("Error fetching subtotal", error);
+    } finally {
+      setLoading(false); // Set loading to false after the data fetch is complete
     }
   }
 
-  // handling payment
-
+  // Handling payment
   const generateReceipt = () => {
     return `receipt_${new Date().getTime()}`;
   };
@@ -62,7 +68,6 @@ function Bag({ customerData }) {
         image: brand,
         order_id: response.data.id, //This is a sample Order ID. Pass the `id` obtained in the response of Step 1
         handler: async function (response) {
-          //
           const body = {
             ...response,
             id: customerData.id,

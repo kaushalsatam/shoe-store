@@ -5,6 +5,7 @@ import { debounce } from "lodash";
 import AddIcon from "@mui/icons-material/Add";
 import RemoveIcon from "@mui/icons-material/Remove";
 import { IconButton } from "@mui/material";
+import { useLoading } from "../../../Context/LoadingContext";
 
 function QuantitySelector({
   customer_id,
@@ -15,8 +16,10 @@ function QuantitySelector({
   getSubTotal, // Make sure the prop name is correct
 }) {
   const [quantity, setQuantity] = useState(product_quantity);
+  const { setLoading } = useLoading();
 
   const updateQuantityInBackend = debounce(async (newQuantity) => {
+    setLoading(true);
     try {
       await axios.put(`${baseURL}/cart/update-quantity`, {
         customer_id,
@@ -27,6 +30,8 @@ function QuantitySelector({
       getSubTotal();
     } catch (error) {
       console.error("Error updating quantity:", error);
+    } finally {
+      setLoading(false);
     }
   }, 500);
 

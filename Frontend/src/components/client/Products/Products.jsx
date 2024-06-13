@@ -4,14 +4,17 @@ import Sidebar from "./Sidebar";
 import { baseURL } from "../../../utils/baseURL";
 import axios from "axios";
 import { useLocation } from "react-router-dom";
+import { useLoading } from "../../../Context/LoadingContext.jsx"; // Import the loading context
 
 function Products() {
   const [search, setSearch] = useState("");
-  console.log(search);
+  // console.log(search);
   const [products, setProducts] = useState([]);
   const location = useLocation();
+  const { setLoading } = useLoading(); // Use the loading context
 
   async function getData(gender, category) {
+    setLoading(true); // Set loading to true when starting the data fetch
     try {
       const result = await axios.get(`${baseURL}/getProducts`, {
         params: { gender, category },
@@ -19,6 +22,8 @@ function Products() {
       setProducts(result.data);
     } catch (error) {
       console.error("Error fetching products:", error);
+    } finally {
+      setLoading(false); // Set loading to false after the data fetch is complete
     }
   }
 

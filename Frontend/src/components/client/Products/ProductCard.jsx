@@ -4,11 +4,14 @@ import ShoppingBag from "@mui/icons-material/ShoppingBag";
 import { NavLink } from "react-router-dom";
 import axios from "axios";
 import { baseURL } from "../../../utils/baseURL";
+import { useLoading } from "../../../Context/LoadingContext";
 
 const ProductCard = ({ cardData }) => {
   const [imageSrc, setImageSrc] = useState("");
+  const { setLoading } = useLoading();
 
   async function getProductData(id) {
+    setLoading(true);
     try {
       const response = await axios.get(`${baseURL}/getImage`, {
         params: { id },
@@ -24,6 +27,8 @@ const ProductCard = ({ cardData }) => {
       setImageSrc(`data:image/jpeg;base64,${base64String}`);
     } catch (error) {
       console.error("Error fetching product data:", error);
+    } finally {
+      setLoading(false);
     }
   }
 
