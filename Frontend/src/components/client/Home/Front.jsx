@@ -1,9 +1,10 @@
+import React from "react";
 import frontImage from "../../../assets/Nike3.png";
 
 function Front() {
   return (
     <div className="home-front-page flex justify-center items-center my-6">
-      <div className="front-heading">
+      <div className="front-heading" data-aos="fade-right">
         <h1 className="mt-1 text-4xl font-extrabold text-gray-900 sm:text-5xl sm:tracking-tight lg:text-6xl">
           Step Up Your Game:{" "}
           <span className="text-gray-500">
@@ -11,7 +12,7 @@ function Front() {
           </span>
         </h1>
       </div>
-      <div className="relative">
+      <div className="relative" data-aos="fade-left">
         <div className="absolute inset-0 h-full w-full bg-gray-200 z-0 rounded-full"></div>
         <img
           src={frontImage}

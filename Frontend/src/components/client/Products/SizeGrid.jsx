@@ -1,66 +1,31 @@
-import React from "react";
+import React, { useState } from "react";
 
-function SizeGrid({ setSize }) {
+function SizeGrid({ setSize, isKids }) {
+  const [selectedSize, setSelectedSize] = useState(null);
+
   function handleClick(value) {
     setSize(value);
+    setSelectedSize(value);
   }
+
+  const adultSizes = [6, 6.5, 7, 7.5, 8, 8.5, 9, 9.5, 10];
+  const kidsSizes = [3, 3.5, 4, 4.5, 5, 5.5, 6, 6.5, 7];
+
+  const sizes = isKids ? kidsSizes : adultSizes;
 
   return (
     <div className="size-grid-container grid grid-cols-3 grid-rows-3 text-center">
-      <div
-        className="border-2 m-2 p-4 cursor-pointer hover:border-black"
-        onClick={() => handleClick(6)}
-      >
-        UK 6
-      </div>
-      <div
-        className="border-2 m-2 p-4 cursor-pointer hover:border-black"
-        onClick={() => handleClick(6.5)}
-      >
-        UK 6.5
-      </div>
-      <div
-        className="border-2 m-2 p-4 cursor-pointer hover:border-black"
-        onClick={() => handleClick(7)}
-      >
-        UK 7
-      </div>
-      <div
-        className="border-2 m-2 p-4 cursor-pointer hover:border-black"
-        onClick={() => handleClick(7.5)}
-      >
-        UK 7.5
-      </div>
-      <div
-        className="border-2 m-2 p-4 cursor-pointer hover:border-black"
-        onClick={() => handleClick(8)}
-      >
-        UK 8
-      </div>
-      <div
-        className="border-2 m-2 p-4 cursor-pointer hover:border-black"
-        onClick={() => handleClick(8.5)}
-      >
-        UK 8.5
-      </div>
-      <div
-        className="border-2 m-2 p-4 cursor-pointer hover:border-black"
-        onClick={() => handleClick(9)}
-      >
-        UK 9
-      </div>
-      <div
-        className="border-2 m-2 p-4 cursor-pointer hover:border-black"
-        onClick={() => handleClick(9.5)}
-      >
-        UK 9.5
-      </div>
-      <div
-        className="border-2 m-2 p-4 cursor-pointer hover:border-black"
-        onClick={() => handleClick(10)}
-      >
-        UK 10
-      </div>
+      {sizes.map((size) => (
+        <div
+          key={size}
+          className={`border-2 m-2 p-4 rounded-md cursor-pointer ${
+            selectedSize === size ? "border-black" : "border-gray-300"
+          } hover:border-black`}
+          onClick={() => handleClick(size)}
+        >
+          {isKids ? `UK ${size}` : `UK ${size}`}
+        </div>
+      ))}
     </div>
   );
 }

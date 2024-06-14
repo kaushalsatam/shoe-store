@@ -52,10 +52,10 @@ const Sidebar = ({ setSearch }) => {
             onChange={handleChange}
           >
             <MenuItem value="">Default</MenuItem>
-            <MenuItem value="AscendingPrice">Price: Low to High</MenuItem>
-            <MenuItem value="DescendingPrice">Price: High to Low</MenuItem>
-            <MenuItem value="AscendingName">A to Z</MenuItem>
-            <MenuItem value="DescendingName">Z to A</MenuItem>
+            <MenuItem value="price ASC">Price: Low to High</MenuItem>
+            <MenuItem value="price DESC">Price: High to Low</MenuItem>
+            <MenuItem value="name ASC">A to Z</MenuItem>
+            <MenuItem value="name DESC">Z to A</MenuItem>
           </Select>
         </FormControl>
       </div>

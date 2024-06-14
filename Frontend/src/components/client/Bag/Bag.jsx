@@ -7,6 +7,8 @@ import { NavLink, useNavigate } from "react-router-dom";
 import sadBag from "../../../assets/Sad Bag.png";
 import brand from "../../../assets/Brand.svg";
 import { useLoading } from "../../../Context/LoadingContext"; // Import the loading context
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 function Bag({ customerData }) {
   const [bag, setBag] = useState([]);
@@ -46,6 +48,11 @@ function Bag({ customerData }) {
     }
   }
 
+  const handleRemoveItem = (productId) => {
+    setBag(bag.filter((item) => item.product_id !== productId));
+    getSubTotal(); // Update the subtotal after removing the item
+  };
+
   // Handling payment
   const generateReceipt = () => {
     return `receipt_${new Date().getTime()}`;
@@ -84,6 +91,7 @@ function Bag({ customerData }) {
             }
           );
           console.log(validateResponse.data);
+          toast.success("Order Placed!");
           navigate("/products");
         },
         prefill: {
@@ -100,13 +108,13 @@ function Bag({ customerData }) {
       };
       var rzp1 = new window.Razorpay(options);
       rzp1.on("payment.failed", function (response) {
-        alert(response.error.code);
-        alert(response.error.description);
-        alert(response.error.source);
-        alert(response.error.step);
-        alert(response.error.reason);
-        alert(response.error.metadata.order_id);
-        alert(response.error.metadata.payment_id);
+        // alert(response.error.code);
+        toast.error(response.error.description);
+        // alert(response.error.source);
+        // alert(response.error.step);
+        // alert(response.error.reason);
+        // alert(response.error.metadata.order_id);
+        // alert(response.error.metadata.payment_id);
       });
       rzp1.open();
       e.preventDefault();
@@ -142,7 +150,12 @@ function Bag({ customerData }) {
         <div className="grid grid-cols-3">
           <div className="bag bg-gray-100 rounded-2xl p-4 m-4 shadow-2xl col-span-2">
             {bag.map((item, index) => (
-              <Item key={index} bagData={item} getSubTotal={getSubTotal} />
+              <Item
+                key={index}
+                bagData={item}
+                getSubTotal={getSubTotal}
+                onRemoveItem={handleRemoveItem}
+              />
             ))}
           </div>
           <PaymentDetails

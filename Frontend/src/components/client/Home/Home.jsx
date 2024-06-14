@@ -1,3 +1,6 @@
+import React, { useEffect } from "react";
+import AOS from "aos";
+import "aos/dist/aos.css";
 import FeaturedProduct from "./FeaturedProduct";
 import runningShoes from "../../../assets/RunningShoes.jpg";
 import casualSneakers from "../../../assets/CasualSneakers.jpg";
@@ -7,6 +10,10 @@ import { NavLink } from "react-router-dom";
 import Footer from "../Footer/Footer";
 
 function Home() {
+  useEffect(() => {
+    AOS.init({ duration: 1000 });
+  }, []);
+
   return (
     <>
       <Front />

@@ -19,22 +19,25 @@ function ProductDetails({ isAuthenticated, customerData, notify }) {
   async function addToBag(id) {
     try {
       if (isAuthenticated) {
-        toast.success("Added to bag successfully!");
-        const customerId = parseInt(JSON.stringify(customerData.id));
-        const productId = parseInt(id);
-        const request = await axios.post(`${baseURL}/addtobag`, {
-          customerId,
-          productId,
-          quantity,
-          size,
-        });
-        console.log(request.data);
+        if (size) {
+          toast.success("Added to bag successfully!");
+          const customerId = parseInt(JSON.stringify(customerData.id));
+          const productId = parseInt(id);
+          const request = await axios.post(`${baseURL}/addtobag`, {
+            customerId,
+            productId,
+            quantity,
+            size,
+          });
+          console.log(request.data);
+        } else {
+          toast.warning("Please select size to add item to your bag!");
+        }
       } else {
-        toast.error("Please log in to add items to your bag.");
+        toast.warning("Please log in to add items to your bag!");
       }
     } catch (e) {
-      toast.error("Error adding to bag: " + e.message);
-      console.log(e.message);
+      console.error("Error adding to bag: " + e.message);
     }
   }
 
@@ -80,7 +83,10 @@ function ProductDetails({ isAuthenticated, customerData, notify }) {
           </span>
         </div>
         <p className="text-lg">{productData.description}</p>
-        <SizeGrid setSize={setSize} />
+        <SizeGrid
+          setSize={setSize}
+          isKids={productData.gender == "Kids" ? true : false}
+        />
         <button
           className="border p-4 mx-4 bg-black hover:bg-gray-900 text-white rounded-full font-semibold"
           onClick={() => {

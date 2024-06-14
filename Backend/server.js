@@ -354,28 +354,6 @@ app.post(
 );
 
 // GET route for all details of products
-// app.get("/getProducts", async (req, res) => {
-//   const category = req.query.category;
-//   const gender = req.query.gender;
-//   if (gender) {
-//     const request = await db.query(
-//       "SELECT p.id, p.name, p.brand, p.description, p.original_price, p.current_price, p.category, p.gender, p.stock_quantity, pi.main, pi.left_view, pi.right_view, pi.top_view, pi.bottom_view FROM products p JOIN products_images pi ON p.id = pi.product_id WHERE p.gender = $1",
-//       [gender]
-//     );
-//     res.status(200).json(request.rows);
-//   } else if (category) {
-//     const request = await db.query(
-//       "SELECT p.id, p.name, p.brand, p.description, p.original_price, p.current_price, p.category, p.gender, p.stock_quantity, pi.main, pi.left_view, pi.right_view, pi.top_view, pi.bottom_view FROM products p JOIN products_images pi ON p.id = pi.product_id WHERE p.category = $1",
-//       [category]
-//     );
-//     res.status(200).json(request.rows);
-//   } else {
-//     const request = await db.query(
-//       "SELECT p.id, p.name, p.brand, p.description, p.original_price, p.current_price, p.category, p.gender, p.stock_quantity, pi.main, pi.left_view, pi.right_view, pi.top_view, pi.bottom_view FROM products p JOIN products_images pi ON p.id = pi.product_id"
-//     );
-//     res.status(200).json(request.rows);
-//   }
-// });
 
 app.get("/getProducts", async (req, res) => {
   const category = req.query.category;
@@ -593,6 +571,27 @@ app.post("/order", async (req, res) => {
   } catch (error) {
     console.error("Error creating order:", error.message);
     res.status(500).send("Internal Server Error");
+  }
+});
+
+app.delete("/bag/:id", async (req, res) => {
+  // console.log(typeof req.query.customer_id);
+  // console.log(typeof req.params.id);
+  const customer_id = parseInt(req.query.customer_id);
+  const product_id = parseInt(req.params.id);
+  try {
+    const result = await db.query(
+      "DELETE FROM cart WHERE product_id = $1 AND customer_id = $2",
+      [product_id, customer_id]
+    );
+    if (result.rowCount > 0) {
+      res.status(200).json({ message: "Item deleted successfully" });
+    } else {
+      res.status(404).json({ message: "Item not found" });
+    }
+  } catch (error) {
+    console.error("Error deleting item:", error);
+    res.status(500).json({ message: "Internal server error" });
   }
 });
 

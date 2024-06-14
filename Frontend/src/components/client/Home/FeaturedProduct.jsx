@@ -2,7 +2,10 @@ import { NavLink } from "react-router-dom";
 
 function FeaturedProduct(props) {
   return (
-    <div className="flex flex-col rounded-lg shadow-lg overflow-hidden">
+    <div
+      className="flex flex-col rounded-lg shadow-lg overflow-hidden"
+      data-aos="fade-up"
+    >
       <div className="flex-shrink-0">
         <img
           className="h-48 w-full object-cover"

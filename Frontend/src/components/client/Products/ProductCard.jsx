@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Button } from "@mui/material";
-import ShoppingBag from "@mui/icons-material/ShoppingBag";
+import FavoriteBorderOutlinedIcon from "@mui/icons-material/FavoriteBorderOutlined";
 import { NavLink } from "react-router-dom";
 import axios from "axios";
 import { baseURL } from "../../../utils/baseURL";
@@ -57,7 +57,7 @@ const ProductCard = ({ cardData }) => {
             ₹{cardData.current_price}
           </span>
           <Button variant="text">
-            <ShoppingBag />
+            <FavoriteBorderOutlinedIcon />
           </Button>
         </div>
       </div>
