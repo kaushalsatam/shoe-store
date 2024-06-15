@@ -1,13 +1,16 @@
 import { useEffect, useState } from "react";
-import { Button } from "@mui/material";
 import FavoriteBorderOutlinedIcon from "@mui/icons-material/FavoriteBorderOutlined";
 import { NavLink } from "react-router-dom";
 import axios from "axios";
 import { baseURL } from "../../../utils/baseURL";
 import { useLoading } from "../../../Context/LoadingContext";
+import FavoriteIcon from "@mui/icons-material/Favorite";
+import { IconButton } from "@mui/material";
+import { red } from "@mui/material/colors";
 
 const ProductCard = ({ cardData }) => {
   const [imageSrc, setImageSrc] = useState("");
+  const [isFavorite, setIsFavorite] = useState(false);
   const { setLoading } = useLoading();
 
   async function getProductData(id) {
@@ -56,9 +59,13 @@ const ProductCard = ({ cardData }) => {
           <span className="text-gray-900 font-bold">
             ₹{cardData.current_price}
           </span>
-          <Button variant="text">
-            <FavoriteBorderOutlinedIcon />
-          </Button>
+          <IconButton variant="text" onClick={() => setIsFavorite(!isFavorite)}>
+            {isFavorite ? (
+              <FavoriteIcon sx={{ color: red[500] }} />
+            ) : (
+              <FavoriteBorderOutlinedIcon />
+            )}
+          </IconButton>
         </div>
       </div>
     </div>

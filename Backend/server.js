@@ -74,21 +74,22 @@ app.get("/", async (req, res) => {
 
 // Authentication of Admin
 app.post("/adminLogin", async (req, res) => {
-  // console.log(req.body); // Log the request body to see what data is being received
   const { email, password } = req.body;
   try {
     const check = await db.query(
       "SELECT * FROM administrator WHERE email = $1 AND password = $2",
       [email, password]
     );
-    // console.log(check.rows);
+
     if (check.rows.length > 0) {
       res.status(200).json({ message: "Logged in successfully!" });
     } else {
-      res.status(400).json({ message: "Login unsuccessful!" });
+      res
+        .status(401)
+        .json({ message: "Login unsuccessful! Enter valid credentials." });
     }
   } catch (e) {
-    console.log(e);
+    console.error("Error logging in:", e);
     res.status(500).json({ message: "Internal server error" });
   }
 });

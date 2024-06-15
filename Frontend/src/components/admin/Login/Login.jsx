@@ -4,6 +4,8 @@ import { useForm } from "react-hook-form";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { baseURL } from "../../../utils/baseURL";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 function Login({ setIsAdminAuthenticated }) {
   const navigate = useNavigate();
@@ -11,12 +13,24 @@ function Login({ setIsAdminAuthenticated }) {
   const handleLogin = async (data) => {
     try {
       const result = await axios.post(`${baseURL}/adminLogin`, data);
-      // console.log(result.data)
-      if (result.status == 200) {
+      if (result.status === 200) {
         setIsAdminAuthenticated(true);
+        toast.success(result.data.message);
         navigate("/admin");
+      } else {
+        toast.error(result.data.message);
       }
     } catch (e) {
+      if (e.response) {
+        // The request was made and the server responded with a status code that falls out of the range of 2xx
+        toast.error(e.response.data.message);
+      } else if (e.request) {
+        // The request was made but no response was received
+        toast.error("No response from server. Please try again later.");
+      } else {
+        // Something happened in setting up the request that triggered an Error
+        toast.error("An error occurred. Please try again.");
+      }
       console.log(e.message);
     }
   };
@@ -29,7 +43,6 @@ function Login({ setIsAdminAuthenticated }) {
   } = useForm();
 
   function onSubmit(data) {
-    console.log(data);
     handleLogin(data);
   }
 
