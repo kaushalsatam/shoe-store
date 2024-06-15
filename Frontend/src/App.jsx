@@ -34,6 +34,7 @@ import CustomerOrders from "./components/client/CustomerOrders/CustomerOrders.js
 import OrderDetails from "./components/admin/Orders/OrderDetails.jsx";
 import { LoadingProvider } from "./Context/LoadingContext.jsx";
 import LoadingSpinner from "./components/LoadingSpinner.jsx";
+import Favourite from "./components/client/Favourite/Favourite.jsx";
 // import { CircularProgress } from "@mui/material";
 
 function App() {
@@ -105,6 +106,10 @@ function App() {
             <Route
               path="orders"
               element={<CustomerOrders customerData={customerData} />}
+            />
+            <Route
+              path="favourites"
+              element={<Favourite customerData={customerData} />}
             />
           </Route>
         </Route>

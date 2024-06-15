@@ -1,9 +1,10 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import QuantitySelector from "./QuantitySelector";
 import ClearIcon from "@mui/icons-material/Clear";
 import { IconButton } from "@mui/material";
 import axios from "axios";
 import { baseURL } from "../../../utils/baseURL";
+import { toast } from "react-toastify";
 
 function Item({ bagData, getSubTotal, onRemoveItem }) {
   const [imageSrc, setImageSrc] = useState("");
@@ -16,6 +17,7 @@ function Item({ bagData, getSubTotal, onRemoveItem }) {
         headers: { Authorization: localStorage.getItem("authToken") },
       });
       onRemoveItem(bagData.product_id); // Notify parent to remove the item from state
+      toast.success("Item removed from bag!");
     } catch (e) {
       console.error(e.message);
     }

@@ -20,7 +20,7 @@ function ProductDetails({ isAuthenticated, customerData, notify }) {
     try {
       if (isAuthenticated) {
         if (size) {
-          toast.success("Added to bag successfully!");
+          toast.success("Added to bag!");
           const customerId = parseInt(JSON.stringify(customerData.id));
           const productId = parseInt(id);
           const request = await axios.post(`${baseURL}/addtobag`, {
@@ -29,7 +29,7 @@ function ProductDetails({ isAuthenticated, customerData, notify }) {
             quantity,
             size,
           });
-          console.log(request.data);
+          // console.log(request.data);
         } else {
           toast.warning("Please select size to add item to your bag!");
         }
@@ -38,6 +38,24 @@ function ProductDetails({ isAuthenticated, customerData, notify }) {
       }
     } catch (e) {
       console.error("Error adding to bag: " + e.message);
+    }
+  }
+
+  async function addToFavourites() {
+    try {
+      if (isAuthenticated) {
+        const customerId = parseInt(JSON.stringify(customerData.id));
+        const productId = parseInt(id);
+        await axios.post(`${baseURL}/favourites`, {
+          customerId,
+          productId,
+        });
+        toast.success("Added to favourites!");
+      } else {
+        toast.warning("Please log in to add items to your bag!");
+      }
+    } catch (e) {
+      console.error("Error adding to favourites: " + e.message);
     }
   }
 
@@ -95,7 +113,10 @@ function ProductDetails({ isAuthenticated, customerData, notify }) {
         >
           Add to Bag
         </button>
-        <button className="border p-4 mx-4 border-black bg-white hover:bg-gray-200 rounded-full font-semibold">
+        <button
+          className="border p-4 mx-4 border-black bg-white hover:bg-gray-200 rounded-full font-semibold"
+          onClick={() => addToFavourites()}
+        >
           Add to Favourites
         </button>
       </div>

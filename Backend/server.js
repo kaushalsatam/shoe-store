@@ -665,6 +665,42 @@ app.post("/order/validate", async (req, res) => {
   }
 });
 
+app.post("/favourites", async (req, res) => {
+  const { customerId, productId } = req.body;
+  try {
+    const result = await db.query(
+      "INSERT INTO favourites (customer_id, product_id) VALUES ($1, $2);",
+      [customerId, productId]
+    );
+    res.status(200).json({ message: "Added to favourites!" });
+  } catch (e) {
+    console.error(e.message);
+  }
+});
+
+app.get("/favourites", async (req, res) => {
+  const { id } = req.query;
+  try {
+    const result = await db.query(
+      "SELECT f.id, p.name, p.brand, p.category, p.current_price, pi.left_view FROM favourites f JOIN products p ON f.product_id = p.id JOIN products_images pi ON p.id = pi.product_id WHERE f.customer_id = $1",
+      [id]
+    );
+    res.status(200).json(result.rows);
+  } catch (e) {
+    console.log(e.message);
+  }
+});
+
+app.delete("/favourites", async (req, res) => {
+  const { id } = req.query;
+  try {
+    const result = await db.query("DELETE FROM favourites WHERE id = $1", [id]);
+    res.status(200).json({ message: "Removed from favourites!" });
+  } catch (e) {
+    console.log(e.message);
+  }
+});
+
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
 });

@@ -80,7 +80,7 @@ export default function AccountMenu() {
       >
         <NavLink to={"/user/profile"}>
           <MenuItem onClick={handleClose}>
-            <Avatar /> My account
+            <Avatar /> My Account
           </MenuItem>
         </NavLink>
         <Divider />

@@ -3,6 +3,7 @@ import Avatar from "@mui/material/Avatar";
 import LocalMallIcon from "@mui/icons-material/LocalMall";
 import { NavLink } from "react-router-dom";
 import Footer from "../Footer/Footer";
+import FavoriteIcon from "@mui/icons-material/Favorite";
 
 function Profile({ customerData }) {
   return (
@@ -22,7 +23,13 @@ function Profile({ customerData }) {
             <NavLink to={"/user/orders"}>
               <div className="avatar-name flex justify-start items-center p-4 gap-4 cursor-pointer hover:bg-gray-100">
                 <LocalMallIcon className="text-gray-600" />
-                <span className="text-gray-600 text-lg">My Orders</span>
+                <span className="text-gray-600 text-lg">Orders</span>
+              </div>
+            </NavLink>
+            <NavLink to={"/user/favourites"}>
+              <div className="avatar-name flex justify-start items-center p-4 gap-4 cursor-pointer hover:bg-gray-100">
+                <FavoriteIcon className="text-gray-600" />
+                <span className="text-gray-600 text-lg">Favourites</span>
               </div>
             </NavLink>
           </div>
