@@ -8,11 +8,12 @@ import "react-toastify/dist/ReactToastify.css";
 import SizeGrid from "./SizeGrid";
 import { useLoading } from "../../../Context/LoadingContext"; // Import the loading context
 
-function ProductDetails({ isAuthenticated, customerData, notify }) {
+function ProductDetails({ isAuthenticated, customerData }) {
   const [productData, setProductData] = useState(null);
   const [quantity, setQuantity] = useState(1);
   const [size, setSize] = useState(null);
   const [error, setError] = useState(null);
+  const [isFavourite, setIsFavourite] = useState(false); // State to track if product is in favourites
   const { id } = useParams();
   const { setLoading } = useLoading(); // Use the loading context
 
@@ -21,15 +22,14 @@ function ProductDetails({ isAuthenticated, customerData, notify }) {
       if (isAuthenticated) {
         if (size) {
           toast.success("Added to bag!");
-          const customerId = parseInt(JSON.stringify(customerData.id));
-          const productId = parseInt(id);
-          const request = await axios.post(`${baseURL}/addtobag`, {
+          const customerId = Number(customerData.id);
+          const productId = Number(id);
+          await axios.post(`${baseURL}/addtobag`, {
             customerId,
             productId,
             quantity,
             size,
           });
-          // console.log(request.data);
         } else {
           toast.warning("Please select size to add item to your bag!");
         }
@@ -37,25 +37,48 @@ function ProductDetails({ isAuthenticated, customerData, notify }) {
         toast.warning("Please log in to add items to your bag!");
       }
     } catch (e) {
+      toast.error("Error adding to bag: " + e.message);
       console.error("Error adding to bag: " + e.message);
     }
   }
 
-  async function addToFavourites() {
+  async function toggleFavourite() {
     try {
-      if (isAuthenticated) {
-        const customerId = parseInt(JSON.stringify(customerData.id));
-        const productId = parseInt(id);
+      const customerId = Number(customerData.id);
+      const productId = Number(id);
+
+      if (isFavourite) {
+        await axios.delete(`${baseURL}/favourites`, {
+          data: { customerId, productId },
+        });
+        setIsFavourite(false);
+        toast.success("Removed from favourites!");
+      } else {
         await axios.post(`${baseURL}/favourites`, {
           customerId,
           productId,
         });
+        setIsFavourite(true);
         toast.success("Added to favourites!");
-      } else {
-        toast.warning("Please log in to add items to your bag!");
       }
     } catch (e) {
-      console.error("Error adding to favourites: " + e.message);
+      toast.error("Error updating favourites: " + e.message);
+      console.error("Error updating favourites: " + e.message);
+    }
+  }
+
+  async function checkIfFavourite() {
+    try {
+      const customerId = Number(customerData.id);
+      const productId = Number(id);
+      const response = await axios.get(
+        `${baseURL}/favourites?customerId=${customerId}&productId=${productId}`
+      );
+      if (response.data.length > 0) {
+        setIsFavourite(true);
+      }
+    } catch (e) {
+      console.error("Error checking favourites: " + e.message);
     }
   }
 
@@ -65,6 +88,9 @@ function ProductDetails({ isAuthenticated, customerData, notify }) {
       try {
         const response = await axios.get(`${baseURL}/products/${id}`);
         setProductData(response.data[0]);
+        if (isAuthenticated) {
+          checkIfFavourite(); // Check if the product is in the favourites list
+        }
       } catch (error) {
         setError("Error fetching product data");
         console.error(error);
@@ -74,7 +100,7 @@ function ProductDetails({ isAuthenticated, customerData, notify }) {
     }
 
     getProductData(id);
-  }, [id, setLoading]);
+  }, [id, setLoading, isAuthenticated]);
 
   if (error) {
     return <div>{error}</div>;
@@ -101,23 +127,18 @@ function ProductDetails({ isAuthenticated, customerData, notify }) {
           </span>
         </div>
         <p className="text-lg">{productData.description}</p>
-        <SizeGrid
-          setSize={setSize}
-          isKids={productData.gender == "Kids" ? true : false}
-        />
+        <SizeGrid setSize={setSize} isKids={productData.gender === "Kids"} />
         <button
           className="border p-4 mx-4 bg-black hover:bg-gray-900 text-white rounded-full font-semibold"
-          onClick={() => {
-            addToBag(id);
-          }}
+          onClick={() => addToBag(id)}
         >
           Add to Bag
         </button>
         <button
           className="border p-4 mx-4 border-black bg-white hover:bg-gray-200 rounded-full font-semibold"
-          onClick={() => addToFavourites()}
+          onClick={toggleFavourite}
         >
-          Add to Favourites
+          {isFavourite ? "Remove from Favourites" : "Add to Favourites"}
         </button>
       </div>
     </div>

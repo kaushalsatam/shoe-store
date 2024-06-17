@@ -6,7 +6,7 @@ import axios from "axios";
 import { useLocation } from "react-router-dom";
 import { useLoading } from "../../../Context/LoadingContext.jsx"; // Import the loading context
 
-function Products() {
+function Products({ customerData, isAuthenticated }) {
   const [search, setSearch] = useState("");
   // console.log(search);
   const [products, setProducts] = useState([]);
@@ -45,7 +45,12 @@ function Products() {
               : data.name.toLowerCase().includes(search);
           })
           .map((data) => (
-            <ProductCard key={data.id} cardData={data} />
+            <ProductCard
+              key={data.id}
+              cardData={data}
+              customerData={customerData}
+              isAuthenticated={isAuthenticated}
+            />
           ))}
       </div>
     </div>

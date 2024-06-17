@@ -58,7 +58,10 @@ function App() {
             path="products"
             element={
               <Suspense fallback={"Loading..."}>
-                <LazyClientProducts />
+                <LazyClientProducts
+                  customerData={customerData}
+                  isAuthenticated={isAuthenticated}
+                />
               </Suspense>
             }
           />
@@ -147,7 +150,7 @@ function App() {
     <LoadingProvider>
       <LoadingSpinner />
       <RouterProvider router={router} />
-      <ToastContainer position="top-center" theme="dark" />
+      <ToastContainer position="top-center" theme="dark" stacked />
     </LoadingProvider>
   );
 }

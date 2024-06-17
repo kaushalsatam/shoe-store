@@ -7,10 +7,10 @@ import { toast } from "react-toastify";
 function Favourite({ customerData }) {
   const [myFavourites, setMyFavourites] = useState([]);
 
-  const getFavourites = async (id) => {
+  const getFavourites = async (customerId) => {
     try {
       const request = await axios.get(`${baseURL}/favourites`, {
-        params: { id },
+        params: { customerId },
       });
       setMyFavourites(request.data);
     } catch (error) {
@@ -18,12 +18,14 @@ function Favourite({ customerData }) {
     }
   };
 
-  const deleteItem = async (id) => {
+  const deleteItem = async (customerId, productId) => {
     try {
       await axios.delete(`${baseURL}/favourites`, {
-        params: { id },
+        data: { customerId, productId }, // Use data to send DELETE body
       });
-      setMyFavourites(myFavourites.filter((item) => item.id !== id));
+      setMyFavourites(
+        myFavourites.filter((item) => item.product_id !== productId)
+      );
       toast.success("Removed from favourites!");
     } catch (error) {
       console.error("Failed to delete item", error);
@@ -45,8 +47,9 @@ function Favourite({ customerData }) {
       {myFavourites.length > 0 ? (
         myFavourites.map((favourite) => (
           <FavouriteItem
-            key={favourite.id}
+            key={favourite.product_id} // Use product_id as key
             favourite={favourite}
+            customerId={customerData.id} // Pass customerId to FavouriteItem
             deleteItem={deleteItem}
           />
         ))

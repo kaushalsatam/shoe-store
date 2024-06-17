@@ -5,6 +5,7 @@ import { IconButton } from "@mui/material";
 import axios from "axios";
 import { baseURL } from "../../../utils/baseURL";
 import { toast } from "react-toastify";
+import { NavLink } from "react-router-dom";
 
 function Item({ bagData, getSubTotal, onRemoveItem }) {
   const [imageSrc, setImageSrc] = useState("");
@@ -40,16 +41,20 @@ function Item({ bagData, getSubTotal, onRemoveItem }) {
   return (
     <div className="item flex m-4 bg-white rounded-2xl shadow-xl justify-between">
       <div className="item-info flex">
-        <div className="w-48 h-48 overflow-hidden p-4 m-4">
-          <img
-            src={imageSrc}
-            alt="Product Image"
-            className="w-full h-full object-cover rounded-xl cursor-pointer"
-          />
-        </div>
+        <NavLink to={`/product-details/${bagData.product_id}`}>
+          <div className="w-48 h-48 overflow-hidden p-4 m-4">
+            <img
+              src={imageSrc}
+              alt="Product Image"
+              className="w-full h-full object-cover rounded-xl cursor-pointer"
+            />
+          </div>
+        </NavLink>
         <div className="flex flex-col justify-center items-start">
           <h1 className="text-xl font-bold cursor-pointer">
-            {bagData.product_name}
+            <NavLink to={`/product-details/${bagData.product_id}`}>
+              {bagData.product_name}
+            </NavLink>
           </h1>
           <p>{bagData.price}</p>
           <div className="flex p-4">

@@ -668,36 +668,62 @@ app.post("/order/validate", async (req, res) => {
 app.post("/favourites", async (req, res) => {
   const { customerId, productId } = req.body;
   try {
-    const result = await db.query(
-      "INSERT INTO favourites (customer_id, product_id) VALUES ($1, $2);",
+    const check = await db.query(
+      "SELECT * FROM favourites WHERE customer_id = $1 AND product_id = $2",
       [customerId, productId]
     );
-    res.status(200).json({ message: "Added to favourites!" });
+
+    if (check.rows.length < 1) {
+      await db.query(
+        "INSERT INTO favourites (customer_id, product_id) VALUES ($1, $2);",
+        [customerId, productId]
+      );
+      res.status(200).json({ message: "Added to favourites!" });
+    } else {
+      res.status(200).json({ message: "Already added to favourites!" });
+    }
   } catch (e) {
     console.error(e.message);
+    res.status(500).json({ message: "Internal Server Error" });
   }
 });
 
 app.get("/favourites", async (req, res) => {
-  const { id } = req.query;
+  const { customerId, productId } = req.query;
   try {
-    const result = await db.query(
-      "SELECT f.id, p.name, p.brand, p.category, p.current_price, pi.left_view FROM favourites f JOIN products p ON f.product_id = p.id JOIN products_images pi ON p.id = pi.product_id WHERE f.customer_id = $1",
-      [id]
-    );
+    let query = `
+      SELECT f.customer_id, f.product_id, p.name, p.brand, p.current_price, pi.left_view
+      FROM favourites f
+      JOIN products p ON f.product_id = p.id
+      JOIN products_images pi ON p.id = pi.product_id
+      WHERE f.customer_id = $1
+    `;
+    let params = [customerId];
+
+    if (productId) {
+      query += " AND f.product_id = $2";
+      params.push(productId);
+    }
+
+    const result = await db.query(query, params);
     res.status(200).json(result.rows);
   } catch (e) {
     console.log(e.message);
+    res.status(500).json({ message: "Internal Server Error" });
   }
 });
 
 app.delete("/favourites", async (req, res) => {
-  const { id } = req.query;
+  const { customerId, productId } = req.body; // Use body instead of query for DELETE
   try {
-    const result = await db.query("DELETE FROM favourites WHERE id = $1", [id]);
+    const result = await db.query(
+      "DELETE FROM favourites WHERE customer_id = $1 AND product_id = $2",
+      [customerId, productId]
+    );
     res.status(200).json({ message: "Removed from favourites!" });
   } catch (e) {
     console.log(e.message);
+    res.status(500).json({ message: "Internal Server Error" });
   }
 });
 
