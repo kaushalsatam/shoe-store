@@ -53,26 +53,29 @@ function Carousel({ productData }) {
   }
 
   return (
-    <div className="flex items-center gap-8">
-      <div className="m-8 flex flex-col w-20 gap-4">
-        {Object.entries(imageURLs).map(
-          ([key, url]) =>
-            url && (
-              <img
-                key={key}
-                src={url}
-                alt={`${key} view`}
-                className="rounded-2xl hover:opacity-75"
-                onMouseOver={() => displayImage(url)} // Modified to pass a function
-              />
-            )
-        )}
+    <div className="flex items-start">
+      <div className="grid md:grid-cols-4 grid-cols-1 items-center gap-4">
+        <div className="m-8 flex md:flex-col w-8 md:w-20 gap-4 order-2 md:order-1">
+          {Object.entries(imageURLs).map(
+            ([key, url]) =>
+              url && (
+                <img
+                  key={key}
+                  src={url}
+                  alt={`${key} view`}
+                  className="rounded-2xl hover:opacity-75"
+                  onMouseOver={() => displayImage(url)} // Modified to pass a function
+                />
+              )
+          )}
+        </div>
+        {/* Main image - default order 2 on md, 1 on smaller */}
+        <img
+          src={displayedImageURL || imageURLs.left} // Display the clicked image if available, otherwise display the default image (left view)
+          alt="Main Image"
+          className="h-auto w-96 rounded-lg col-span-3 order-1 md:order-2"
+        />
       </div>
-      <img
-        src={displayedImageURL || imageURLs.left} // Display the clicked image if available, otherwise display the default image (left view)
-        alt="Main Image"
-        className="h-auto w-96 rounded-lg"
-      />
     </div>
   );
 }

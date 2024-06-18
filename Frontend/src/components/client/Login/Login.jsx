@@ -49,7 +49,7 @@ function Login({ setIsAuthenticated, setCustomerData }) {
         <h1 className="text-2xl font-semibold">Welcome Back!</h1>
         <div
           id="login-form"
-          className="flex flex-col w-96 p-6 m-6 justify-center items-center gap-4 rounded-2xl shadow-md bg-cyan-100"
+          className="flex flex-col w-96 p-6 m-6 justify-center items-center gap-4 rounded-2xl shadow-md"
         >
           <LockOutlinedIcon fontSize="large" color="secondary" />
           <h1 className="font-bold text-2xl">Login</h1>

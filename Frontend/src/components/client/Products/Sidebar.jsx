@@ -24,7 +24,7 @@ const Sidebar = ({ setSearch }) => {
   };
 
   return (
-    <div className="fixed top-0 h-full w-64 px-5 py-10 mt-24 sm:px-0 sm:w-44 space-x-2 sm:space-x-0 text-center flex flex-col gap-8 bg-white">
+    <div className="flex flex-col gap-8 p-4 lg:p-8 bg-white">
       <div>
         <h2 className="text-xl font-bold mb-4">Search</h2>
         <TextField
@@ -38,15 +38,16 @@ const Sidebar = ({ setSearch }) => {
             ),
           }}
           variant="standard"
+          fullWidth
         />
       </div>
       <div>
         <h2 className="text-xl font-bold mb-4">Filter</h2>
         <FormControl fullWidth>
-          <InputLabel id="demo-simple-select-label">Sort by</InputLabel>
+          <InputLabel id="sort-by-label">Sort by</InputLabel>
           <Select
-            labelId="demo-simple-select-label"
-            id="demo-simple-select"
+            labelId="sort-by-label"
+            id="sort-by"
             value={sort}
             label="Sort by"
             onChange={handleChange}
@@ -62,10 +63,12 @@ const Sidebar = ({ setSearch }) => {
       <hr />
       <div>
         <h2 className="text-xl font-bold mb-4">Categories</h2>
-        <FormControl>
+        <FormControl component="fieldset">
           <RadioGroup
-            aria-labelledby="demo-radio-buttons-group-label"
-            name="radio-buttons-group"
+            aria-label="category"
+            name="category"
+            value={category}
+            onChange={handleCategoryChange}
           >
             <FormControlLabel
               value="Running"

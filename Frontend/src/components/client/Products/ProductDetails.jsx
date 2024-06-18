@@ -111,10 +111,8 @@ function ProductDetails({ isAuthenticated, customerData }) {
   }
 
   return (
-    <div className="grid grid-cols-2">
-      <div className="flex items-start">
-        <Carousel productData={productData} />
-      </div>
+    <div className="grid grid-cols-1 md:grid-cols-2">
+      <Carousel productData={productData} />
       <div className="data p-8 flex flex-col gap-4">
         <h1 className="font-black text-4xl">{productData.name}</h1>
         <h2 className="text-xl">
