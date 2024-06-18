@@ -6,6 +6,7 @@ import MenuItem from "@mui/material/MenuItem";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import Divider from "@mui/material/Divider";
 import IconButton from "@mui/material/IconButton";
+import ShoppingBagIcon from "@mui/icons-material/ShoppingBag";
 // import Typography from "@mui/material/Typography";
 import Tooltip from "@mui/material/Tooltip";
 import PersonAdd from "@mui/icons-material/PersonAdd";
@@ -84,6 +85,14 @@ export default function AccountMenu() {
           </MenuItem>
         </NavLink>
         <Divider />
+        <NavLink to={"/user/bag"}>
+          <MenuItem>
+            <ListItemIcon aria-label="bag">
+              <ShoppingBagIcon fontSize="small" />
+            </ListItemIcon>
+            Bag
+          </MenuItem>
+        </NavLink>
         <NavLink to={"/signup"}>
           <MenuItem onClick={handleClose}>
             <ListItemIcon>
