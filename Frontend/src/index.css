@@ -16,3 +16,8 @@ html{
     margin: 0 3rem;
 }
 
+@media (max-width: 768px) {
+    html{
+        margin: 0 1.5rem;
+    }
+}

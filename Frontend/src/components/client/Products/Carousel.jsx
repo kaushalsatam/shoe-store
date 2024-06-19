@@ -55,7 +55,7 @@ function Carousel({ productData }) {
   return (
     <div className="flex items-start">
       <div className="grid md:grid-cols-4 grid-cols-1 items-center gap-4">
-        <div className="m-8 flex md:flex-col w-8 md:w-20 gap-4 order-2 md:order-1">
+        <div className="m-8 flex md:flex-col w-10 md:w-20 gap-4 order-2 md:order-1">
           {Object.entries(imageURLs).map(
             ([key, url]) =>
               url && (
