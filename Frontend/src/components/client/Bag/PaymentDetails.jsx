@@ -2,13 +2,15 @@ import { Button } from "@mui/material";
 import { NavLink } from "react-router-dom";
 
 function PaymentDetails({ subtotal, shippingCost, onCheckout }) {
-  //   const total = subtotal + shippingCost;
+  // const total = subtotal + shippingCost;
   const total = subtotal;
 
   return (
-    <div className="checkout-card bg-gray-100 m-8 p-6 fixed right-8 flex flex-col justify-between rounded-2xl shadow-xl w-96 h-3/4">
+    <div className="checkout-card bg-gray-100 m-4 p-6 sticky md:fixed right-8 flex flex-col justify-between rounded-2xl shadow-xl w-full md:w-96 md:h-3/4">
       <div className="w-full">
-        <h1 className="text-2xl font-semibold m-4">Payment Details</h1>
+        <h1 className="text-2xl font-semibold mb-4 text-center">
+          Payment Details
+        </h1>
         <div className="flex justify-between m-2">
           <span className="text-lg font-medium">Subtotal:</span>
           <span className="text-lg">₹{subtotal}</span>

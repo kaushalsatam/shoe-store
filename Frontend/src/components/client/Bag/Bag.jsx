@@ -134,20 +134,26 @@ function Bag({ customerData }) {
   return (
     <div>
       {!bag.length ? (
-        <div className="empty-bag flex flex-col justify-center items-center p-4 m-4 gap-8">
-          <h2 className="text-4xl">Your bag is currently empty.</h2>
-          <img src={sadBag} alt="Sad Bag" height={200} width={200} />
-          <p className="text-2xl">
+        <div className="empty-bag flex flex-col justify-center items-center p-4 m-4 gap-8 text-center">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl">
+            Your bag is currently empty.
+          </h2>
+          <img
+            src={sadBag}
+            alt="Sad Bag"
+            className="w-32 h-32 sm:w-48 sm:h-48 md:w-56 md:h-56"
+          />
+          <p className="text-lg sm:text-xl md:text-2xl">
             Looks like you haven't added anything to your bag yet.
           </p>
           <NavLink to={"/products"}>
-            <p className="text-2xl text-blue-700">
+            <p className="text-lg sm:text-xl md:text-2xl text-blue-700">
               Start shopping to fill it up!
             </p>
           </NavLink>
         </div>
       ) : (
-        <div className="grid grid-cols-3">
+        <div className="grid grid-cols-1 md:grid-cols-3">
           <div className="bag bg-gray-100 rounded-2xl p-4 m-4 shadow-2xl col-span-2">
             {bag.map((item, index) => (
               <Item

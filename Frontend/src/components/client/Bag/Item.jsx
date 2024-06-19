@@ -39,42 +39,45 @@ function Item({ bagData, getSubTotal, onRemoveItem }) {
   }, [bagData.quantity, bagData.current_price]);
 
   return (
-    <div className="item flex m-4 bg-white rounded-2xl shadow-xl justify-between">
-      <div className="item-info flex">
+    <div className="item bg-white rounded-2xl shadow-xl m-4 p-4 sm:flex sm:justify-between">
+      {/* Image Container */}
+      <div className="flex items-center sm:w-48 h-48 overflow-hidden">
         <NavLink to={`/product-details/${bagData.product_id}`}>
-          <div className="w-48 h-48 overflow-hidden p-4 m-4">
-            <img
-              src={imageSrc}
-              alt="Product Image"
-              className="w-full h-full object-cover rounded-xl cursor-pointer"
-            />
-          </div>
+          <img
+            src={imageSrc}
+            alt="Product Image"
+            className="w-full h-full object-cover rounded-xl cursor-pointer"
+          />
         </NavLink>
-        <div className="flex flex-col justify-center items-start">
-          <h1 className="text-xl font-bold cursor-pointer">
-            <NavLink to={`/product-details/${bagData.product_id}`}>
-              {bagData.product_name}
-            </NavLink>
-          </h1>
-          <p>{bagData.price}</p>
-          <div className="flex p-4">
-            <QuantitySelector
-              customer_id={bagData.customer_id}
-              product_id={bagData.product_id}
-              product_quantity={bagData.quantity}
-              product_current_price={bagData.current_price}
-              setTotal={setTotal}
-              getSubTotal={getSubTotal}
-            />
-          </div>
-          <div>
-            <p className="text-xl font-semibold">
-              Total: <span className="font-normal">₹{total}/-</span>
-            </p>
-          </div>
-        </div>
       </div>
-      <div className="flex items-start">
+
+      {/* Details Container */}
+      <div className="flex flex-col justify-center sm:ml-4">
+        <h1 className="text-xl font-bold mb-2">
+          <NavLink
+            to={`/product-details/${bagData.product_id}`}
+            className="text-blue-600 hover:underline"
+          >
+            {bagData.product_name}
+          </NavLink>
+        </h1>
+        <div className="flex items-center mb-2">
+          <QuantitySelector
+            customer_id={bagData.customer_id}
+            product_id={bagData.product_id}
+            product_quantity={bagData.quantity}
+            product_current_price={bagData.current_price}
+            setTotal={setTotal}
+            getSubTotal={getSubTotal}
+          />
+        </div>
+        <p className="text-lg font-semibold mb-2">
+          Total: <span className="font-normal">₹{total}/-</span>
+        </p>
+      </div>
+
+      {/* Delete Button */}
+      <div className="flex items-center mt-4 sm:mt-0 sm:ml-auto">
         <IconButton aria-label="delete" size="large" onClick={deleteItem}>
           <ClearIcon />
         </IconButton>

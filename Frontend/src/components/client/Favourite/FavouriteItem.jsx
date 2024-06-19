@@ -15,9 +15,12 @@ function FavouriteItem({ favourite, customerId, deleteItem }) {
   console.log(favourite);
 
   return (
-    <div className="item flex m-4 bg-white rounded-2xl shadow-xl justify-between">
-      <div className="item-info flex">
-        <NavLink to={`/product-details/${favourite.product_id}`}>
+    <div className="item flex flex-col sm:flex-row m-4 bg-white rounded-2xl shadow-xl justify-between">
+      <div className="item-info flex flex-col sm:flex-row">
+        <NavLink
+          to={`/product-details/${favourite.product_id}`}
+          className="sm:block hidden"
+        >
           <div className="w-48 h-48 overflow-hidden p-4 m-4">
             <img
               src={imageSrc}
@@ -26,7 +29,7 @@ function FavouriteItem({ favourite, customerId, deleteItem }) {
             />
           </div>
         </NavLink>
-        <div className="flex flex-col justify-center items-start">
+        <div className="flex flex-col justify-center items-start p-4 sm:p-0 sm:pl-4">
           <h1 className="text-xl font-bold cursor-pointer">
             <NavLink to={`/product-details/${favourite.product_id}`}>
               {favourite.name}
@@ -36,7 +39,7 @@ function FavouriteItem({ favourite, customerId, deleteItem }) {
           <p>₹{favourite.current_price}/-</p>
         </div>
       </div>
-      <div className="flex items-start">
+      <div className="flex items-start sm:items-center p-4 sm:p-0">
         <IconButton
           aria-label="delete"
           size="large"
