@@ -2,12 +2,13 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { IconButton } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
+import { baseURL } from "../../../utils/baseURL";
 
 function Customers() {
   const [customerData, setCustomerData] = useState([]);
 
   async function getData() {
-    const result = await axios.get("http://localhost:3000/customers");
+    const result = await axios.get(`${baseURL}/customers`);
     setCustomerData(result.data);
   }
 

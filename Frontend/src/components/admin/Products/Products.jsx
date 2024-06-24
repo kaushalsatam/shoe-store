@@ -4,13 +4,14 @@ import { IconButton } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import AddIcon from "@mui/icons-material/Add";
 import { NavLink } from "react-router-dom";
+import { baseURL } from "../../../utils/baseURL";
 
 function Products() {
   const [productsData, setProductsData] = useState([]);
 
   const getData = async () => {
     try {
-      const result = await axios.get("http://localhost:3000/allProducts");
+      const result = await axios.get(`${baseURL}/allProducts`);
       setProductsData(result.data);
     } catch (error) {
       console.error("There was an error fetching the products!", error);
