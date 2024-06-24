@@ -10,12 +10,11 @@ import ShoppingBagIcon from "@mui/icons-material/ShoppingBag";
 // import Typography from "@mui/material/Typography";
 import Tooltip from "@mui/material/Tooltip";
 import PersonAdd from "@mui/icons-material/PersonAdd";
-import Settings from "@mui/icons-material/Settings";
-import Logout from "@mui/icons-material/Logout";
 import PersonIcon from "@mui/icons-material/Person";
 import { NavLink } from "react-router-dom";
+import LoginIcon from "@mui/icons-material/Login";
 
-export default function AccountMenu() {
+export default function AccountMenu({ isAuthenticated }) {
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
   const handleClick = (event) => {
@@ -101,12 +100,16 @@ export default function AccountMenu() {
             Add another account
           </MenuItem>
         </NavLink>
-        <MenuItem onClick={handleClose}>
-          <ListItemIcon>
-            <Logout fontSize="small" />
-          </ListItemIcon>
-          Logout
-        </MenuItem>
+        {!isAuthenticated && (
+          <NavLink to={"/user-login"}>
+            <MenuItem onClick={handleClose}>
+              <ListItemIcon>
+                <LoginIcon fontSize="small" />
+              </ListItemIcon>
+              Login
+            </MenuItem>
+          </NavLink>
+        )}
       </Menu>
     </React.Fragment>
   );

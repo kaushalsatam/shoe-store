@@ -104,7 +104,13 @@ function App() {
             <Route path="bag" element={<Bag customerData={customerData} />} />
             <Route
               path="profile"
-              element={<Profile customerData={customerData} />}
+              element={
+                <Profile
+                  customerData={customerData}
+                  setIsAuthenticated={setIsAuthenticated}
+                  setCustomerData={setCustomerData}
+                />
+              }
             />
             <Route
               path="orders"

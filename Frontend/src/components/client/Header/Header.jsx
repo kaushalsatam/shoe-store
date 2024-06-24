@@ -7,7 +7,7 @@ import brand from "../../../assets/Brand.svg";
 import { NavLink } from "react-router-dom";
 import AccountMenu from "../AccountMenu/AccountMenu";
 
-function Header() {
+function Header({ isAuthenticated }) {
   const [anchorEl, setAnchorEl] = useState(null);
   const isMenuOpen = Boolean(anchorEl);
 
@@ -49,7 +49,7 @@ function Header() {
               <NavLink to={"/products?gender=Unisex"}>Unisex</NavLink>
             </li>
             <li className="text-xl font-medium">
-              <AccountMenu />
+              <AccountMenu isAuthenticated={isAuthenticated} />
             </li>
           </nav>
           <div className="lg:hidden flex items-center">

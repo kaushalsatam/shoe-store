@@ -3,18 +3,21 @@ import Avatar from "@mui/material/Avatar";
 import LocalMallIcon from "@mui/icons-material/LocalMall";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import IconButton from "@mui/material/IconButton";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { useTheme } from "@mui/material/styles";
 import Footer from "../Footer/Footer";
+import Logout from "@mui/icons-material/Logout";
+import { toast } from "react-toastify";
 
-function Profile({ customerData }) {
+function Profile({ customerData, setIsAuthenticated, setCustomerData }) {
   const [anchorEl, setAnchorEl] = useState(null);
   const theme = useTheme();
   const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
+  const navigate = useNavigate();
 
   const handleMenuOpen = (event) => {
     setAnchorEl(event.currentTarget);
@@ -22,6 +25,13 @@ function Profile({ customerData }) {
 
   const handleMenuClose = () => {
     setAnchorEl(null);
+  };
+
+  const handleLogout = () => {
+    setIsAuthenticated(false);
+    setCustomerData([]);
+    toast.success("Logged out Successfully!");
+    navigate("/");
   };
 
   return (
@@ -70,6 +80,14 @@ function Profile({ customerData }) {
                     >
                       <FavoriteIcon className="mr-2" /> Favourites
                     </MenuItem>
+                    <MenuItem
+                      onClick={() => {
+                        handleMenuClose();
+                        handleLogout();
+                      }}
+                    >
+                      <Logout className="mr-2" /> Logout
+                    </MenuItem>
                   </Menu>
                 </>
               )}
@@ -88,6 +106,13 @@ function Profile({ customerData }) {
                     <span className="text-gray-600 text-lg">Favourites</span>
                   </div>
                 </NavLink>
+                <div
+                  className="avatar-name flex justify-start items-center p-4 gap-4 cursor-pointer hover:bg-gray-100"
+                  onClick={handleLogout}
+                >
+                  <Logout className="text-gray-600" />
+                  <span className="text-gray-600 text-lg">Logout</span>
+                </div>
               </>
             )}
           </div>

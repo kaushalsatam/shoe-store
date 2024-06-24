@@ -1,6 +1,5 @@
 import { Outlet } from "react-router-dom";
 import Header from "./Header/Header";
-import Footer from "./Footer/Footer";
 
 function ClientLayout({ isAuthenticated }) {
   return (
@@ -9,7 +8,7 @@ function ClientLayout({ isAuthenticated }) {
         <Outlet />
       ) : (
         <>
-          <Header />
+          <Header isAuthenticated={isAuthenticated} />
           <Outlet />
         </>
       )}

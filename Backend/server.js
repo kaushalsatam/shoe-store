@@ -18,22 +18,22 @@ const saltRounds = 10;
 const secretKey = "TOPSECRET";
 
 // postgresql configuration
-// const db = new pg.Client({
-//   user: process.env.PG_USER,
-//   host: process.env.PG_HOST,
-//   database: process.env.PG_DATABASE,
-//   password: process.env.PG_PASSWORD,
-//   port: process.env.PG_PORT,
-// });
+const db = new pg.Client({
+  user: process.env.PG_USER,
+  host: process.env.PG_HOST,
+  database: process.env.PG_DATABASE,
+  password: process.env.PG_PASSWORD,
+  port: process.env.PG_PORT,
+});
 
 // NEON Configurations
-const connectionString = process.env.DATABASE_URL;
-const db = new pg.Client({
-  connectionString,
-  ssl: {
-    rejectUnauthorized: false,
-  },
-});
+// const connectionString = process.env.DATABASE_URL;
+// const db = new pg.Client({
+//   connectionString,
+//   ssl: {
+//     rejectUnauthorized: false,
+//   },
+// });
 
 db.connect();
 
