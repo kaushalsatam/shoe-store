@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
-import { baseURL } from "../../../utils/baseURL";
 import axios from "axios";
 import { NavLink } from "react-router-dom";
+import CircularProgress from "@mui/material/CircularProgress";
+import { baseURL } from "../../../utils/baseURL";
 
 function Orders() {
   const [ordersData, setOrdersData] = useState([]);
@@ -10,10 +11,10 @@ function Orders() {
 
   const getData = async () => {
     try {
-      const request = await axios.get(`${baseURL}/get-orders`);
-      setOrdersData(request.data);
+      const response = await axios.get(`${baseURL}/get-orders`);
+      setOrdersData(response.data);
     } catch (error) {
-      setError("Error fetching orders data.");
+      setError("Error fetching orders data. Please try again later.");
       console.error("Error fetching orders:", error);
     } finally {
       setLoading(false);
@@ -22,7 +23,7 @@ function Orders() {
 
   const formatDate = (dateString) => {
     const date = new Date(dateString);
-    return date.toLocaleDateString(); // This will format the date as "MM/DD/YYYY" or according to the locale settings
+    return date.toLocaleDateString(); // Format the date as "MM/DD/YYYY" based on locale
   };
 
   useEffect(() => {
@@ -33,7 +34,9 @@ function Orders() {
     <div className="container mx-auto">
       <div className="bg-white shadow-md rounded-lg overflow-hidden">
         {loading ? (
-          <div className="p-4 text-center">Loading...</div>
+          <div className="p-4 flex items-center justify-center">
+            <CircularProgress />
+          </div>
         ) : error ? (
           <div className="p-4 text-center text-red-500">{error}</div>
         ) : (

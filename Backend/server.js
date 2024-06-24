@@ -106,6 +106,22 @@ app.get("/customers", async (req, res) => {
   }
 });
 
+app.delete("/customers/:id", async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    // Assuming db.query is a method that executes SQL queries using a PostgreSQL client (like pg.Pool)
+    const result = await db.query("DELETE FROM customers WHERE id = $1", [id]);
+
+    // Respond with a success message if deletion was successful
+    res.status(200).json({ message: "Customer Deleted Successfully!" });
+  } catch (e) {
+    // Log any errors that occur during deletion
+    console.error("Error deleting customer:", e.message);
+    res.status(500).json({ error: "Failed to delete customer." });
+  }
+});
+
 app.get("/allProducts", async (req, res) => {
   try {
     const result = await db.query("SELECT * FROM products");

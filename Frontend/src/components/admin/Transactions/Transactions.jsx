@@ -1,19 +1,28 @@
 import { useEffect, useState } from "react";
-import { baseURL } from "../../../utils/baseURL.js";
 import axios from "axios";
+import { baseURL } from "../../../utils/baseURL.js";
+import CircularProgress from "@mui/material/CircularProgress";
 
 function Transactions() {
   const [transactionsData, setTransactionsData] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   const getData = async () => {
-    const request = await axios.get(`${baseURL}/get-transactions`);
-    // console.log(request.data);
-    setTransactionsData(request.data);
+    try {
+      const response = await axios.get(`${baseURL}/get-transactions`);
+      setTransactionsData(response.data);
+    } catch (error) {
+      setError("Error fetching transactions data. Please try again later.");
+      console.error("Error fetching transactions:", error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const formatDate = (dateString) => {
     const date = new Date(dateString);
-    return date.toLocaleDateString(); // This will format the date as "MM/DD/YYYY" or according to the locale settings
+    return date.toLocaleDateString(); // Format the date as "MM/DD/YYYY" based on locale
   };
 
   useEffect(() => {
@@ -21,9 +30,15 @@ function Transactions() {
   }, []);
 
   return (
-    <div>
-      <div className="container mx-auto">
-        <div className="bg-white shadow-md rounded-lg overflow-hidden">
+    <div className="container mx-auto">
+      <div className="bg-white shadow-md rounded-lg overflow-hidden">
+        {loading && (
+          <div className="p-4 flex items-center justify-center">
+            <CircularProgress />
+          </div>
+        )}
+        {error && <div className="p-4 text-center text-red-500">{error}</div>}
+        {!loading && !error && (
           <table className="min-w-full leading-normal">
             <thead>
               <tr>
@@ -73,7 +88,7 @@ function Transactions() {
               ))}
             </tbody>
           </table>
-        </div>
+        )}
       </div>
     </div>
   );
