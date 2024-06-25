@@ -26,8 +26,8 @@ function Login({ setIsAuthenticated, setCustomerData }) {
         toast.error(result.data.message);
       }
     } catch (e) {
-      console.log(e.message);
-      // toast.error("Login unsuccessful!");
+      // console.log(e.message);
+      toast.error("Login unsuccessful! Please check your login credentials.");
     }
   };
 
