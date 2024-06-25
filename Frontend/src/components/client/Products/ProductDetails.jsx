@@ -37,7 +37,7 @@ function ProductDetails({ isAuthenticated, customerData }) {
         toast.warning("Please log in to add items to your bag!");
       }
     } catch (e) {
-      toast.error("Error adding to bag: " + e.message);
+      // toast.error("Error adding to bag: " + e.message);
       console.error("Error adding to bag: " + e.message);
     }
   }
@@ -62,7 +62,7 @@ function ProductDetails({ isAuthenticated, customerData }) {
         toast.success("Added to favourites!");
       }
     } catch (e) {
-      toast.error("Error updating favourites: " + e.message);
+      // toast.error("Error updating favourites: " + e.message);
       console.error("Error updating favourites: " + e.message);
     }
   }
