@@ -13,9 +13,12 @@ import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 function Products({ customerData, isAuthenticated }) {
   const [search, setSearch] = useState("");
   const [products, setProducts] = useState([]);
+  const [filteredProducts, setFilteredProducts] = useState([]);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const location = useLocation();
   const { setLoading } = useLoading(); // Use the loading context
+  const [selectedCategory, setSelectedCategory] = useState(""); // Add state for selected category
+  const [sort, setSort] = useState(""); // Add state for sorting
 
   async function getData(gender, category) {
     setLoading(true); // Set loading to true when starting the data fetch
@@ -38,6 +41,37 @@ function Products({ customerData, isAuthenticated }) {
     getData(genderParam, categoryParam);
   }, [location.search]);
 
+  useEffect(() => {
+    // Filter products based on search input, selected category, and sort option
+    let updatedProducts = products.filter((data) => {
+      const matchesSearch =
+        search.toLowerCase() === "" || data.name.toLowerCase().includes(search);
+      const matchesCategory =
+        selectedCategory === "" || data.category === selectedCategory;
+      return matchesSearch && matchesCategory;
+    });
+
+    // Sort products based on selected sort option
+    if (sort) {
+      updatedProducts = updatedProducts.sort((a, b) => {
+        switch (sort) {
+          case "price ASC":
+            return a.current_price - b.current_price;
+          case "price DESC":
+            return b.current_price - a.current_price;
+          case "name ASC":
+            return a.name.localeCompare(b.name);
+          case "name DESC":
+            return b.name.localeCompare(a.name);
+          default:
+            return 0;
+        }
+      });
+    }
+
+    setFilteredProducts(updatedProducts);
+  }, [search, selectedCategory, sort, products]);
+
   const toggleDrawer = (open) => (event) => {
     if (
       event.type === "keydown" &&
@@ -55,27 +89,29 @@ function Products({ customerData, isAuthenticated }) {
           <ArrowForwardIosIcon />
         </IconButton>
         <Drawer anchor="left" open={drawerOpen} onClose={toggleDrawer(false)}>
-          <Sidebar setSearch={setSearch} />
+          <Sidebar
+            setSearch={setSearch}
+            setSelectedCategory={setSelectedCategory}
+            setSort={setSort}
+          />
         </Drawer>
       </div>
       <div className="hidden lg:block lg:w-1/4 xl:w-1/5">
-        <Sidebar setSearch={setSearch} />
+        <Sidebar
+          setSearch={setSearch}
+          setSelectedCategory={setSelectedCategory}
+          setSort={setSort}
+        />
       </div>
       <div className="flex-1 flex flex-wrap gap-4 justify-around p-4 lg:p-8">
-        {products
-          .filter((data) => {
-            return search.toLowerCase() === ""
-              ? data
-              : data.name.toLowerCase().includes(search);
-          })
-          .map((data) => (
-            <ProductCard
-              key={data.id}
-              cardData={data}
-              customerData={customerData}
-              isAuthenticated={isAuthenticated}
-            />
-          ))}
+        {filteredProducts.map((data) => (
+          <ProductCard
+            key={data.id}
+            cardData={data}
+            customerData={customerData}
+            isAuthenticated={isAuthenticated}
+          />
+        ))}
       </div>
     </div>
   );

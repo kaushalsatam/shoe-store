@@ -12,15 +12,20 @@ import {
 } from "@mui/material";
 import { useState } from "react";
 
-const Sidebar = ({ setSearch }) => {
-  const [sort, setSort] = useState("");
+const Sidebar = ({ setSearch, setSelectedCategory, setSort }) => {
+  const [sort, setSortState] = useState("");
   const [category, setCategory] = useState("");
 
   const handleChange = (event) => {
-    setSort(event.target.value);
+    const newSort = event.target.value;
+    setSortState(newSort);
+    setSort(newSort); // Update the parent component's state
   };
+
   const handleCategoryChange = (event) => {
-    setCategory(event.target.value);
+    const newCategory = event.target.value;
+    setCategory(newCategory);
+    setSelectedCategory(newCategory); // Update the parent component's state
   };
 
   return (
